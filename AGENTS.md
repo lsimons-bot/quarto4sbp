@@ -122,6 +122,89 @@ For more details, see README.md.
 
 TODO
 
+## Refactoring Workflow
+
+When refactoring code (splitting modules, reorganizing structure, etc.), follow this workflow:
+
+### 1. Plan the Refactoring
+- Identify what needs to be split/reorganized
+- Determine the target structure (e.g., `package/commands/` for command modules)
+- Ensure tests will mirror the code structure
+
+### 2. Create Feature Branch
+```bash
+git checkout -b refactor/descriptive-name
+```
+
+### 3. File bd Issue FIRST
+```bash
+bd create "Refactor: Brief description of what's being refactored" \
+  --description "Detailed description including what files are being split/moved" \
+  -t task -p 2 --json
+```
+
+### 4. Perform the Refactoring
+- **Create new directories/packages** with `__init__.py` files
+- **Split modules**: Move functions/classes to separate files
+- **Update imports**: Ensure all imports point to new locations
+- **Mirror test structure**: Create matching test directories/files
+- **Split tests**: Move test classes to match new module structure
+- **Run tests frequently**: Verify nothing breaks during refactoring
+
+Example pattern for splitting commands:
+- Code: `package/commands/feature.py` (contains `cmd_feature()`)
+- Test: `tests/commands/test_feature.py` (contains `TestCmdFeature`)
+- Package exports: `package/commands/__init__.py` imports and exports all commands
+
+### 5. Verify Everything Works
+```bash
+python -m pytest tests/ -v  # All tests pass
+# Run any integration tests
+# Check diagnostics if applicable
+```
+
+### 6. Commit the Work
+```bash
+git add -A
+git commit -m "refactor: Split X into separate modules (issue-id)
+
+- Created package/subpackage/ structure
+- Moved function1() to package/subpackage/module1.py
+- Moved function2() to package/subpackage/module2.py
+- Updated imports in main module
+- Split tests into tests/subpackage/test_module1.py and test_module2.py
+- Refactored tests/test_main.py to focus on integration
+- All N tests passing"
+```
+
+### 7. Close bd Issue
+```bash
+bd close issue-id --reason "Completed refactoring, all tests passing"
+```
+
+### 8. Push and Create PR
+```bash
+git push origin refactor/descriptive-name
+gh pr create --title "Refactor: Brief description (issue-id)" \
+  --body "Summary of changes, testing status, benefits"
+```
+
+### 9. After Merge
+```bash
+git checkout main
+git pull
+```
+
+### Refactoring Best Practices
+- ✅ Keep the refactoring focused (one structural change at a time)
+- ✅ Ensure tests mirror code structure (easier to find and maintain)
+- ✅ Run tests after each significant change
+- ✅ Commit atomically (one logical refactoring per commit)
+- ✅ Document benefits in PR (organization, maintainability, extensibility)
+- ❌ Don't mix refactoring with feature additions or bug fixes
+- ❌ Don't skip running tests until the end
+- ❌ Don't forget to update imports everywhere
+
 ## Development Conventions
 
 ### Code Style
