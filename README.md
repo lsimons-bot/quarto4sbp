@@ -7,11 +7,52 @@ A lightweight tool for working with quarto in Schuberg Philis Context.
 - **Python 3.13+** with `uv` package manager: try `brew install uv` on mac
 - [quarto](https://quarto.org/) CLI installed: try `brew install quarto` on mac
 
-## Quick Start
+## Installation
 
-* Set up a new venv with `uv venv`
-* Install the package: `uv pip install -e .`
-* Run the CLI: `uv run q4s help`
+### Option 1: Install Shim (Recommended)
+
+For convenient usage without typing `uv run` every time:
+
+```bash
+# Set up virtual environment
+uv venv
+
+# Install the package
+uv pip install -e .
+
+# Run the install script
+python install.py
+```
+
+This creates a `~/.local/bin/q4s` shim that runs the CLI from the project's venv.
+
+After installation, you can use `q4s` directly:
+
+```bash
+q4s help
+q4s echo hello world
+```
+
+**Note:** Ensure `~/.local/bin` is in your PATH. If not, add this to your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+### Option 2: Use with uv run
+
+If you prefer not to install the shim:
+
+```bash
+# Set up virtual environment
+uv venv
+
+# Install the package
+uv pip install -e .
+
+# Run commands with uv
+uv run q4s help
+```
 
 ## Usage
 
@@ -23,17 +64,17 @@ The `q4s` CLI provides simple utilities for working with quarto in Schuberg Phil
 
 ```bash
 # Show help
-uv run q4s help
+q4s help
 
 # Echo back arguments (useful for testing)
-uv run q4s echo hello world
+q4s echo hello world
 ```
 
 **Examples:**
 
 ```bash
 # Display help message
-$ uv run q4s help
+$ q4s help
 q4s - quarto4sbp CLI tool
 
 Usage: q4s <command> [arguments]
@@ -43,9 +84,11 @@ Available commands:
   echo       Echo back the command-line arguments
 
 # Echo command
-$ uv run q4s echo hello world
+$ q4s echo hello world
 hello world
 ```
+
+**Note:** If you haven't installed the shim, use `uv run q4s` instead of `q4s`.
 
 ## Development
 
