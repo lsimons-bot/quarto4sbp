@@ -142,3 +142,16 @@ uv run pytest tests/my_test_file.py
 # With verbose output
 uv run pytest -v
 ```
+
+### Type Checking
+
+This project uses strict type checking with pyright. Run type checks using:
+
+```bash
+# Run pyright type checking
+uv run pyright
+
+# Type checking is also enforced in CI
+```
+
+All code must pass pyright checks with no errors or warnings before merging.

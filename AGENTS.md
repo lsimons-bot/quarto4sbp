@@ -68,13 +68,21 @@ bd close bd-42 --reason "Completed" --json
 
 **ALWAYS FOLLOW THIS WORKFLOW:**
 
-1. **Create issue FIRST**: `bd create "Task description" -t feature|bug|task -p 0-4 --json`
-2. **Claim your task**: `bd update <id> --status in_progress --json`
-3. **Work on it**: Implement, test, document
-4. **Discover new work?** Create linked issue:
+1. **Create issue FIRST**: `bd create "Task description" -t feature|bug|task|epic -p 0-4 --json`
+2. **Create feature branch**: `git checkout -b feat/descriptive-name` (or `fix/`, `refactor/`, etc.)
+3. **Claim your task**: `bd update <id> --status in_progress --json`
+4. **Work on it**: Implement, test, document
+5. **Discover new work?** Create linked issue:
    - `bd create "Found bug" -p 1 --deps discovered-from:<parent-id> --json`
-5. **Close the issue**: `bd close <id> --reason "Description of what was done" --json`
-6. **Commit everything**: `git add -A && git commit -m "..."` (includes `.beads/issues.jsonl`)
+6. **Run tests**: `uv run pytest -v` (all tests must pass)
+7. **Run type checking**: `uv run pyright` (must have 0 errors, 0 warnings)
+8. **Commit everything**: `git add -A && git commit -m "..."` (includes `.beads/issues.jsonl`)
+9. **For epics, create PR**: 
+   - Push: `git push -u origin branch-name`
+   - Create PR: `gh pr create --title "..." --body "..."`
+   - Wait for CI: `gh pr checks --watch`
+   - Fix any CI failures and push fixes
+10. **Close the issue**: `bd close <id> --reason "Description of what was done" --json`
 
 ### Auto-Sync
 
@@ -244,13 +252,82 @@ git pull
 - Use bullet points for lists rather than verbose paragraphs.
 - Eliminate sections that would be identical across multiple specs.
 
+### Testing and Type Checking
+
+**All code must pass testing and type checking before merging:**
+
+```bash
+# Run full test suite
+uv run pytest -v
+
+# Run type checking (must show 0 errors, 0 warnings)
+uv run pyright
+```
+
+**Testing Requirements:**
+- Write tests for all new functionality
+- Ensure all tests pass locally before pushing
+- Integration tests are preferred over mocking when practical
+- Test files should mirror code structure (e.g., `tests/commands/test_feature.py` for `quarto4sbp/commands/feature.py`)
+
+**Type Checking Requirements:**
+- All code must have complete type annotations
+- Pyright must pass with 0 errors and 0 warnings
+- Use specific ignore comments only when necessary (see Diagnostic Handling below)
+- CI enforces type checking - failing checks will block merging
+
 ### Diagnostic Handling
 
 For diagnostic warnings, use specific Pyright ignore comments with error codes:
 - `# pyright: ignore[reportAny]` for "Type is Any" warnings
 - `# pyright: ignore[reportImplicitOverride]` for unittest method override warnings
-- Use `_ = function_call()` assignment for unused return value warnings.
+- Use `_ = function_call()` assignment for unused return value warnings
+- Always remove unused imports to avoid `reportUnusedImport` errors
 
+
+### Epic Completion Workflow
+
+When completing an epic (large feature), follow this extended workflow:
+
+1. **Implement the feature** following the standard workflow above
+2. **Update spec status** to "Implemented" in the spec file
+3. **Commit all changes** including spec status update
+4. **Push the branch**: `git push -u origin feat/branch-name`
+5. **Create Pull Request**:
+   ```bash
+   gh pr create --title "feat: issue-id - Brief description (spec-xxx)" \
+     --body "## Summary
+   
+   Description of changes
+   
+   ## Changes
+   - ✅ List of changes
+   
+   ## Testing
+   All X tests passing
+   
+   ## Related
+   - Epic: issue-id
+   - Spec: spec-xxx"
+   ```
+6. **Wait for CI checks**: `gh pr checks --watch`
+7. **Fix any CI failures**:
+   - If tests fail: fix and commit
+   - If pyright fails: remove unused imports, add type hints, commit
+   - Push fixes: `git push`
+   - Wait for checks again: `gh pr checks --watch`
+8. **Close the epic** once all checks pass:
+   ```bash
+   bd close issue-id --reason "Completed. All tests passing (X/X). PR #N ready for review." --json
+   ```
+9. **Wait for PR review and merge** (human reviews and merges)
+
+**Important Notes:**
+- ✅ Always wait for CI checks to pass before considering work complete
+- ✅ Fix CI failures immediately with clear commit messages
+- ✅ Don't close the epic until all checks are green
+- ✅ Include test count and PR number in close reason
+- ❌ Don't merge PRs yourself (human review required)
 
 ## If Unsure
 
