@@ -1,11 +1,9 @@
 """Tests for install.py script."""
 
-import os
 import subprocess
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 
 class TestInstall(unittest.TestCase):
