@@ -41,6 +41,7 @@ def cmd_new(args: list[str]) -> int:
     template_pptx = project_root / "templates" / "simple-presentation.pptx"
     template_docx = project_root / "templates" / "simple-document.docx"
     template_render = project_root / "templates" / "render.sh.template"
+    template_qmd = project_root / "templates" / "combined-document.qmd"
 
     # Verify templates exist
     if not template_pptx.exists():
@@ -61,6 +62,13 @@ def cmd_new(args: list[str]) -> int:
         )
         return 1
 
+    if not template_qmd.exists():
+        print(
+            f"Error: QMD template not found at {template_qmd}",
+            file=sys.stderr,
+        )
+        return 1
+
     # Check if qmd file already exists
     if qmd_file.exists():
         print(f"Error: File already exists: {qmd_file}", file=sys.stderr)
@@ -73,40 +81,15 @@ def cmd_new(args: list[str]) -> int:
         print(f"Error: Could not create directory '{target_dir}': {e}", file=sys.stderr)
         return 1
 
-    # Create QMD content with both output formats
-    qmd_content = f"""---
-title: "{base_name}"
-format:
-  pptx:
-    reference-doc: simple-presentation.pptx
-  docx:
-    reference-doc: simple-document.docx
-    toc: true
-    number-sections: true
----
-
-## Introduction
-
-This is a sample document that outputs to both PowerPoint and Word formats.
-
-## Key Points
-
-- Edit this `.qmd` file with your content
-- Run `./render.sh` to generate both `.pptx` and `.docx` files
-- The unified `q4s pdf` command will export both to PDF
-
-## Code Example
-
-```python
-def hello():
-    print("Hello, world!")
-```
-
-## Conclusion
-
-- Quarto makes it easy to create multiple output formats
-- Single source, multiple outputs
-"""
+    # Load and customize QMD template
+    try:
+        qmd_content = template_qmd.read_text()
+        qmd_content = qmd_content.replace("{{TITLE}}", base_name)
+    except OSError as e:
+        print(
+            f"Error: Could not read QMD template '{template_qmd}': {e}", file=sys.stderr
+        )
+        return 1
 
     # Write QMD file
     try:
@@ -162,7 +145,7 @@ def hello():
 
     # Success output
     print(f"Created: {qmd_file}")
-    print(f"Outputs: Both PowerPoint (.pptx) and Word (.docx)")
+    print("Outputs: Both PowerPoint (.pptx) and Word (.docx)")
     print(f"Hint: Run 'cd {target_dir} && ./render.sh' to generate both formats")
 
     return 0
