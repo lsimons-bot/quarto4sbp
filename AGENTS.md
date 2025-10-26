@@ -1,8 +1,8 @@
 # Agent Instructions
 
-This document provides instructions for AI code-generation agents to ensure consistent and high-quality contributions to the `quarto4sbp` project.
+This document provides instructions for AI code-generation agents.
 
-**⚠️ CRITICAL: Always follow the "Workflow for AI Agents" in the Issue Tracking section below. Create a bd issue BEFORE starting any work.**
+Always follow the "Workflow for AI Agents" in the Issue Tracking section below. Create a bd issue BEFORE starting any work.
 
 ## Response Style
 
@@ -11,7 +11,7 @@ This document provides instructions for AI code-generation agents to ensure cons
 
 ## Project Overview
 
-**quarto4sbp** is a lightweight CLI tool for working with [Quarto](https://quarto.org/) documents in Schuberg Philis context.
+Python tool for working with [quarto](https://quarto.org/) in [Schuberg Philis](https://schubergphilis.com/).
 
 **What it does:**
 - Creates Quarto projects from templates (PowerPoint presentations, Word documents, or both)
@@ -98,7 +98,7 @@ bd close bd-42 --reason "Completed" --json
 7. **Run type checking**: `uv run pyright` (must have 0 errors, 0 warnings)
 8. **Run tests with coverage**: `uv run pytest --cov=quarto4sbp --cov-report=term --cov-fail-under=80` (coverage must be ≥80%)
 9. **Commit everything**: `git add -A && git commit -m "..."` (includes `.beads/issues.jsonl`)
-10. **For epics, create PR**: 
+10. **For epics, create PR**:
    - Push: `git push -u origin branch-name`
    - Create PR: `gh pr create --title "..." --body "..."`
    - Wait for CI: `gh pr checks --watch`
@@ -326,8 +326,6 @@ uv run pyright
 - Integration tests are preferred over mocking when practical
 - Test files should mirror code structure (e.g., `tests/commands/test_feature.py` for `quarto4sbp/commands/feature.py`)
 - Maintain minimum 80% test coverage - run `uv run pytest --cov=quarto4sbp --cov-report=term --cov-fail-under=80` before creating PRs
-</text>
-
 
 **Type Checking Requirements:**
 - All code must have complete type annotations
@@ -356,15 +354,15 @@ When completing an epic (large feature), follow this extended workflow:
    ```bash
    gh pr create --title "feat: issue-id - Brief description (spec-xxx)" \
      --body "## Summary
-   
+
    Description of changes
-   
+
    ## Changes
    - ✅ List of changes
-   
+
    ## Testing
    All X tests passing
-   
+
    ## Related
    - Epic: issue-id
    - Spec: spec-xxx"

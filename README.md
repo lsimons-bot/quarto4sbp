@@ -1,31 +1,23 @@
 # quarto4sbp
 
-A lightweight tool for working with quarto in Schuberg Philis Context.
+Python tool for working with [quarto](https://quarto.org/) in [Schuberg Philis](https://schubergphilis.com/).
 
 ## Prerequisites
 
 - **Python 3.13+** with `uv` package manager: try `brew install uv` on mac
 - [quarto](https://quarto.org/) CLI installed: try `brew install quarto` on mac
-- **Microsoft Office** (for PDF export):
-  - **Microsoft PowerPoint** - required for `pdf-pptx` command
-  - **Microsoft Word** - required for `pdf-docx` command
-  - Note: The unified `pdf` command requires both applications
-  - macOS only: PDF export uses AppleScript to automate Office applications
+- for PDF export:
+  - **Mac OS X**
+  - **Microsoft Office**:
+    - **Microsoft PowerPoint** - for PDF export of presentations
+    - **Microsoft Word** - for PDF export of documents
 
 ## Installation
 
-### Option 1: Install Shim (Recommended)
-
-For convenient usage without typing `uv run` every time:
-
 ```bash
-# Set up virtual environment
 uv venv
-
-# Install the package
+source .venv/bin/activate
 uv pip install -e .
-
-# Run the install script
 python install.py
 ```
 
@@ -37,25 +29,10 @@ After installation, you can use `q4s` directly:
 q4s help
 ```
 
-**Note:** Ensure `~/.local/bin` is in your PATH. If not, add this to your `~/.bashrc` or `~/.zshrc`:
+Ensure `~/.local/bin` is in your PATH. If not, add this to your `~/.bashrc` or `~/.zshrc`:
 
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
-```
-
-### Option 2: Use with uv run
-
-If you prefer not to install the shim:
-
-```bash
-# Set up virtual environment
-uv venv
-
-# Install the package
-uv pip install -e .
-
-# Run commands with uv
-uv run q4s help
 ```
 
 ## Usage
@@ -70,104 +47,37 @@ The `q4s` CLI provides utilities for working with Quarto presentations and docum
 # Show help
 q4s help
 
-# Create both PowerPoint and Word documents (unified)
+# Create PowerPoint and Word documents (unified)
 q4s new <directory>
 
-# Create new PowerPoint presentation
+# Create PowerPoint presentation
 q4s new-pptx <directory>
 
-# Create new Word document
+# Create Word document
 q4s new-docx <directory>
 
 # Export all Office documents to PDF
 q4s pdf
 
-# Export only PowerPoint files to PDF
+# Export PowerPoint files to PDF
 q4s pdf-pptx
 
-# Export only Word documents to PDF
+# Export Word documents to PDF
 q4s pdf-docx
 ```
 
-**Examples:**
+### Rendering Documents
 
-#### Creating New Documents
-
-```bash
-# Create both PowerPoint and Word documents with a single command
-$ q4s new my-project
-Created: my-project/my-project.qmd
-Outputs: Both PowerPoint (.pptx) and Word (.docx)
-Hint: Run 'cd my-project && ./render.sh' to generate both formats
-
-# Create a new PowerPoint presentation only
-$ q4s new-pptx my-presentation
-Created: my-presentation/my-presentation.qmd
-Hint: Run 'cd my-presentation && ./render.sh' to generate the presentation
-
-# Create a new Word document only
-$ q4s new-docx my-document
-Created: my-document/my-document.qmd
-Hint: Run 'cd my-document && ./render.sh' to generate the document
-```
-
-#### Rendering Documents
-
-Each created document includes a `render.sh` script that:
+Each created project includes a `render.sh` script that:
 1. Renders the Quarto file (`.qmd`) to Office format (`.pptx` or `.docx`)
 2. Exports the Office file to PDF
 
 ```bash
-# Render and export a presentation
 cd my-presentation
 ./render.sh
-
-# Render and export a document
-cd my-document
-./render.sh
 ```
 
-#### PDF Export Commands
-
-```bash
-# Export all Office documents in current directory
-$ q4s pdf
-=== Exporting PowerPoint files ===
-Found 1 file(s) to export:
-  - presentation.pptx
-Exporting: presentation.pptx -> presentation.pptx.pdf
-Exported 1 file(s), skipped 0 file(s)
-
-=== Exporting Word documents ===
-Found 1 file(s) to export:
-  - document.docx
-Exporting: document.docx -> document.docx.pdf
-Exported 1 file(s), skipped 0 file(s)
-
-✓ All exports completed successfully
-
-# Export only PowerPoint files
-$ q4s pdf-pptx
-Found 1 file(s) to export:
-  - presentation.pptx
-Exporting: presentation.pptx -> presentation.pptx.pdf
-Exported 1 file(s), skipped 0 file(s)
-
-# Export only Word documents
-$ q4s pdf-docx
-Found 1 file(s) to export:
-  - document.docx
-Exporting: document.docx -> document.docx.pdf
-Exported 1 file(s), skipped 0 file(s)
-```
-
-**PDF Export Behavior:**
-- Only exports files that are newer than their corresponding PDFs
-- Skips symlinks and template files
-- Works in the current directory (non-recursive)
-- Requires Microsoft PowerPoint/Word to be installed on macOS
-
-**Note:** If you haven't installed the shim, use `uv run q4s` instead of `q4s`.
+You can also run `q4s pdf` in any directory to convert files.
 
 ## Development
 
@@ -188,8 +98,6 @@ To install try `brew tap steveyegge/beads && brew install bd` on mac.
 - Reference spec numbers in commit messages during feature implementation
 - Run tests after changes: `uv run pytest`
 
-### Commits
-
 ### Git
 
 Follow [Conventional Commits](https://conventionalcommits.org/) with types:
@@ -207,12 +115,12 @@ Follow [Conventional Commits](https://conventionalcommits.org/) with types:
 - improvement: Improves code in some other way (that is not a feat or fix)
 - chore: Changes that take care of some other kind of chore that doesn't impact the main code
 
-## Testing
+### Testing
 
 Unit and integration tests are located in `tests/`. Run them using:
 
 ```bash
-# Full test suite (recommended)
+# Full test suite
 uv run pytest
 
 # Specific test file
@@ -221,27 +129,24 @@ uv run pytest tests/my_test_file.py
 # With verbose output
 uv run pytest -v
 
-# Run tests with coverage report
+# With coverage report
 uv run pytest --cov=quarto4sbp --cov-report=term-missing
 
-# Check coverage meets minimum threshold (80%)
-uv run pytest --cov=quarto4sbp --cov-report=term --cov-fail-under=80
+# Check coverage meets minimum threshold (90%)
+uv run pytest --cov=quarto4sbp --cov-report=term --cov-fail-under=90
+
+# With integration tests (not for agents!)
+RUN_INTEGRATION_TESTS=1 uv run pytest -v
 ```
 
-**Coverage Requirements:**
+### Test Coverage Requirements
+
 - Minimum test coverage: 80%
 - Coverage is enforced in CI - builds will fail if coverage drops below threshold
 - Run coverage checks before creating PRs
 
 ### Type Checking
 
-This project uses strict type checking with pyright. Run type checks using:
-
-```bash
-# Run pyright type checking
-uv run pyright
-
-# Type checking is also enforced in CI
-```
+This project uses strict type checking with pyright. Run type checks using: `uv run pyright`.
 
 All code must pass pyright checks with no errors or warnings before merging.

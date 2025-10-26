@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "quarto4sbp"
 version = "0.1.0"
-description = "A lightweight tool for working with quarto in Schuberg Philis Context"
+description = "Tool for working with quarto in Schuberg Philis."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
