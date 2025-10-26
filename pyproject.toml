@@ -15,6 +15,7 @@ authors = [
 ]
 
 [project.scripts]
+q4s = "quarto4sbp.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["quarto4sbp*"]

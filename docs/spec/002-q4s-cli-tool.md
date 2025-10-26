@@ -42,4 +42,4 @@ tests/
 - No external dependencies beyond stdlib
 - Simple, extensible design for future subcommands
 
-**Status:** Draft
+**Status:** Implemented
