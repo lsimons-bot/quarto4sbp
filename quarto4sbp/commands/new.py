@@ -1,4 +1,4 @@
-"""Command to create a new Quarto presentation from template."""
+"""Unified new command for creating documents with both PowerPoint and Word outputs."""
 
 import os
 import sys
@@ -6,7 +6,9 @@ from pathlib import Path
 
 
 def cmd_new(args: list[str]) -> int:
-    """Create a new Quarto presentation from template.
+    """Create a new Quarto document with both PowerPoint and Word outputs.
+
+    Creates a single .qmd file configured to output to both .pptx and .docx formats.
 
     Args:
         args: Command-line arguments (should contain directory name)
@@ -28,28 +30,28 @@ def cmd_new(args: list[str]) -> int:
 
     # Get paths
     target_dir = Path(dir_name)
-    # Use base name (last component) for the qmd filename
     base_name = target_dir.name
     qmd_file = target_dir / f"{base_name}.qmd"
-    symlink_target = target_dir / "simple-presentation.pptx"
+    pptx_symlink = target_dir / "simple-presentation.pptx"
+    docx_symlink = target_dir / "simple-document.docx"
     render_script = target_dir / "render.sh"
 
-    # Find the templates directory relative to this file
-    # quarto4sbp/commands/new.py -> quarto4sbp -> project root -> templates
+    # Find the templates directory
     project_root = Path(__file__).parent.parent.parent
-    template_qmd = project_root / "templates" / "simple-presentation.qmd"
     template_pptx = project_root / "templates" / "simple-presentation.pptx"
+    template_docx = project_root / "templates" / "simple-document.docx"
     template_render = project_root / "templates" / "render.sh.template"
 
-    # Verify template exists
-    if not template_qmd.exists():
-        print(f"Error: Template not found at {template_qmd}", file=sys.stderr)
-        return 1
-
+    # Verify templates exist
     if not template_pptx.exists():
         print(
-            f"Error: PowerPoint template not found at {template_pptx}", file=sys.stderr
+            f"Error: PowerPoint template not found at {template_pptx}",
+            file=sys.stderr,
         )
+        return 1
+
+    if not template_docx.exists():
+        print(f"Error: Word template not found at {template_docx}", file=sys.stderr)
         return 1
 
     if not template_render.exists():
@@ -71,10 +73,44 @@ def cmd_new(args: list[str]) -> int:
         print(f"Error: Could not create directory '{target_dir}': {e}", file=sys.stderr)
         return 1
 
-    # Copy template content to new qmd file
+    # Create QMD content with both output formats
+    qmd_content = f"""---
+title: "{base_name}"
+format:
+  pptx:
+    reference-doc: simple-presentation.pptx
+  docx:
+    reference-doc: simple-document.docx
+    toc: true
+    number-sections: true
+---
+
+## Introduction
+
+This is a sample document that outputs to both PowerPoint and Word formats.
+
+## Key Points
+
+- Edit this `.qmd` file with your content
+- Run `./render.sh` to generate both `.pptx` and `.docx` files
+- The unified `q4s pdf` command will export both to PDF
+
+## Code Example
+
+```python
+def hello():
+    print("Hello, world!")
+```
+
+## Conclusion
+
+- Quarto makes it easy to create multiple output formats
+- Single source, multiple outputs
+"""
+
+    # Write QMD file
     try:
-        content = template_qmd.read_text()
-        qmd_file.write_text(content)
+        qmd_file.write_text(qmd_content)
     except OSError as e:
         print(f"Error: Could not create file '{qmd_file}': {e}", file=sys.stderr)
         return 1
@@ -82,10 +118,8 @@ def cmd_new(args: list[str]) -> int:
     # Create render.sh script from template
     try:
         render_content = template_render.read_text()
-        # Replace placeholder with actual presentation name
-        render_content = render_content.replace("{{PRESENTATION_NAME}}", base_name)
+        render_content = render_content.replace("{{FILE_NAME}}", base_name)
         render_script.write_text(render_content)
-        # Make it executable
         render_script.chmod(0o755)
     except OSError as e:
         print(
@@ -94,22 +128,41 @@ def cmd_new(args: list[str]) -> int:
         )
         return 1
 
-    # Create symlink to PowerPoint template
-    # Use relative path from target_dir to templates/simple-presentation.pptx
+    # Create symlinks to both templates
+    created_symlinks: list[str] = []
+    failed_symlinks: list[tuple[str, Path, OSError]] = []
+
+    # PowerPoint symlink
     try:
-        # Calculate relative path from target_dir to template_pptx
-        rel_path = os.path.relpath(template_pptx, target_dir)
-        symlink_target.symlink_to(rel_path)
+        rel_path_pptx = os.path.relpath(template_pptx, target_dir)
+        pptx_symlink.symlink_to(rel_path_pptx)
+        created_symlinks.append("PowerPoint")
     except OSError as e:
-        # On Windows, symlinks may fail without admin/developer mode
-        # Print warning but don't fail the command
-        print(f"Warning: Could not create symlink: {e}", file=sys.stderr)
-        print(
-            f"You may need to manually copy or link to {template_pptx}", file=sys.stderr
-        )
+        failed_symlinks.append(("PowerPoint", template_pptx, e))
+
+    # Word symlink
+    try:
+        rel_path_docx = os.path.relpath(template_docx, target_dir)
+        docx_symlink.symlink_to(rel_path_docx)
+        created_symlinks.append("Word")
+    except OSError as e:
+        failed_symlinks.append(("Word", template_docx, e))
+
+    # Print warnings for failed symlinks (non-fatal)
+    if failed_symlinks:
+        for format_name, template_path, error in failed_symlinks:
+            print(
+                f"Warning: Could not create {format_name} symlink: {error}",
+                file=sys.stderr,
+            )
+            print(
+                f"You may need to manually copy or link to {template_path}",
+                file=sys.stderr,
+            )
 
     # Success output
     print(f"Created: {qmd_file}")
-    print(f"Hint: Run 'cd {target_dir} && ./render.sh' to generate the presentation")
+    print(f"Outputs: Both PowerPoint (.pptx) and Word (.docx)")
+    print(f"Hint: Run 'cd {target_dir} && ./render.sh' to generate both formats")
 
     return 0
