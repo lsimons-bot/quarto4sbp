@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quarto4sbp"
+version = "0.1.0"
+description = "A lightweight tool for working with quarto in Schuberg Philis Context"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+]
+authors = [
+    { name = "lsimons" }
+]
+
+[project.scripts]
+
+[tool.setuptools.packages.find]
+include = ["quarto4sbp*"]
+
+[tool.pyright]
+pythonVersion = "3.13"
+typeCheckingMode = "strict"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
