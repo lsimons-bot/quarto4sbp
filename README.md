@@ -10,6 +10,42 @@ A lightweight tool for working with quarto in Schuberg Philis Context.
 ## Quick Start
 
 * Set up a new venv with `uv venv`
+* Install the package: `uv pip install -e .`
+* Run the CLI: `uv run q4s help`
+
+## Usage
+
+### q4s CLI Tool
+
+The `q4s` CLI provides simple utilities for working with quarto in Schuberg Philis context.
+
+**Available Commands:**
+
+```bash
+# Show help
+uv run q4s help
+
+# Echo back arguments (useful for testing)
+uv run q4s echo hello world
+```
+
+**Examples:**
+
+```bash
+# Display help message
+$ uv run q4s help
+q4s - quarto4sbp CLI tool
+
+Usage: q4s <command> [arguments]
+
+Available commands:
+  help       Show this help message
+  echo       Echo back the command-line arguments
+
+# Echo command
+$ uv run q4s echo hello world
+hello world
+```
 
 ## Development
 
