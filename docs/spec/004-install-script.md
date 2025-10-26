@@ -72,4 +72,4 @@ q4s echo hello world
 - Shim stores absolute path to avoid pwd-dependent behavior
 - Consider updating README.md with new install method
 
-**Status:** Draft
+**Status:** Implemented
