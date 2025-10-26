@@ -87,7 +87,6 @@ class TestCmdNew(unittest.TestCase):
         self.assertIn("simple-presentation.pptx", content)
         self.assertIn("simple-document.docx", content)
         self.assertIn("toc:", content)
-        self.assertIn("number-sections:", content)
 
         # Verify both symlinks exist
         pptx_symlink = target_dir / "simple-presentation.pptx"

@@ -69,10 +69,19 @@ def cmd_new_docx(args: list[str]) -> int:
         print(f"Error: Could not create directory '{target_dir}': {e}", file=sys.stderr)
         return 1
 
-    # Copy template content to new qmd file
+    # Load and customize QMD template
     try:
-        content = template_qmd.read_text()
-        qmd_file.write_text(content)
+        qmd_content = template_qmd.read_text()
+        qmd_content = qmd_content.replace("{{TITLE}}", base_name)
+    except OSError as e:
+        print(
+            f"Error: Could not read QMD template '{template_qmd}': {e}", file=sys.stderr
+        )
+        return 1
+
+    # Write QMD file
+    try:
+        qmd_file.write_text(qmd_content)
     except OSError as e:
         print(f"Error: Could not create file '{qmd_file}': {e}", file=sys.stderr)
         return 1

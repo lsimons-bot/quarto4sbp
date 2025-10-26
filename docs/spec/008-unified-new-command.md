@@ -25,7 +25,6 @@ format:
   docx:
     reference-doc: simple-document.docx
     toc: true
-    number-sections: true
 ---
 ```
 

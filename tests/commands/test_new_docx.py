@@ -87,7 +87,6 @@ class TestCmdNewDocx(unittest.TestCase):
         self.assertIn("docx:", content)
         self.assertIn("simple-document.docx", content)
         self.assertIn("toc:", content)
-        self.assertIn("number-sections:", content)
 
         # Verify symlink exists (may not work on all platforms)
         symlink = target_dir / "simple-document.docx"
