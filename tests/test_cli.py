@@ -148,6 +148,20 @@ class TestMain(unittest.TestCase):
             finally:
                 sys.stdout = old_stdout
 
+    def test_llm_command(self) -> None:
+        """Test llm command integration (without args shows usage)."""
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+
+        try:
+            result = main(["llm"])
+            stderr = sys.stderr.getvalue()
+
+            self.assertEqual(result, 1)
+            self.assertIn("Usage: q4s llm test", stderr)
+        finally:
+            sys.stderr = old_stderr
+
 
 class TestCLIIntegration(unittest.TestCase):
     """Integration tests for the q4s CLI."""

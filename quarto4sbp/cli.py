@@ -5,6 +5,7 @@ import sys
 
 from quarto4sbp.commands import (
     cmd_help,
+    cmd_llm,
     cmd_new,
     cmd_new_docx,
     cmd_new_pptx,
@@ -32,7 +33,7 @@ def main(args: list[str] | None = None) -> int:
     parser.add_argument(
         "command",
         nargs="?",
-        help="Command to run (help, new, new-pptx, new-docx, pdf, pdf-pptx, pdf-docx)",
+        help="Command to run (help, llm, new, new-pptx, new-docx, pdf, pdf-pptx, pdf-docx)",
     )
 
     parser.add_argument(
@@ -53,6 +54,8 @@ def main(args: list[str] | None = None) -> int:
     # Route to appropriate subcommand
     if command == "help":
         return cmd_help()
+    elif command == "llm":
+        return cmd_llm(command_args)
     elif command == "new":
         return cmd_new(command_args)
     elif command == "new-pptx":
