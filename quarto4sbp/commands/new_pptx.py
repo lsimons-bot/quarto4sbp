@@ -1,8 +1,17 @@
-"""Command to create a new Quarto presentation from template."""
+"""Command to create a new Quarto PowerPoint presentation from template."""
 
-import os
 import sys
 from pathlib import Path
+
+from quarto4sbp.utils.scaffolding import (
+    create_directory,
+    create_qmd_file,
+    create_render_script,
+    create_template_symlink,
+    get_template_path,
+    validate_directory_name,
+    verify_template_exists,
+)
 
 
 def cmd_new_pptx(args: list[str]) -> int:
@@ -22,100 +31,44 @@ def cmd_new_pptx(args: list[str]) -> int:
     dir_name = args[0]
 
     # Validate directory name
-    if not dir_name or dir_name.startswith("-"):
+    if not validate_directory_name(dir_name):
         print(f"Error: Invalid directory name '{dir_name}'", file=sys.stderr)
         return 1
 
     # Get paths
     target_dir = Path(dir_name)
-    # Use base name (last component) for the qmd filename
     base_name = target_dir.name
     qmd_file = target_dir / f"{base_name}.qmd"
     symlink_target = target_dir / "simple-presentation.pptx"
     render_script = target_dir / "render.sh"
 
-    # Find the templates directory relative to this file
-    # quarto4sbp/commands/new.py -> quarto4sbp -> project root -> templates
-    project_root = Path(__file__).parent.parent.parent
-    template_qmd = project_root / "templates" / "simple-presentation.qmd"
-    template_pptx = project_root / "templates" / "simple-presentation.pptx"
-    template_render = project_root / "templates" / "render.sh.template"
+    # Get template paths
+    template_qmd = get_template_path("simple-presentation.qmd")
+    template_pptx = get_template_path("simple-presentation.pptx")
+    template_render = get_template_path("render.sh.template")
 
-    # Verify template exists
-    if not template_qmd.exists():
-        print(f"Error: Template not found at {template_qmd}", file=sys.stderr)
+    # Verify templates exist
+    if not verify_template_exists(template_qmd, "Template"):
         return 1
-
-    if not template_pptx.exists():
-        print(
-            f"Error: PowerPoint template not found at {template_pptx}", file=sys.stderr
-        )
+    if not verify_template_exists(template_pptx, "PowerPoint template"):
         return 1
-
-    if not template_render.exists():
-        print(
-            f"Error: Render script template not found at {template_render}",
-            file=sys.stderr,
-        )
-        return 1
-
-    # Check if qmd file already exists
-    if qmd_file.exists():
-        print(f"Error: File already exists: {qmd_file}", file=sys.stderr)
+    if not verify_template_exists(template_render, "Render script template"):
         return 1
 
     # Create directory if it doesn't exist
-    try:
-        target_dir.mkdir(parents=True, exist_ok=True)
-    except OSError as e:
-        print(f"Error: Could not create directory '{target_dir}': {e}", file=sys.stderr)
+    if not create_directory(target_dir):
         return 1
 
-    # Load and customize QMD template
-    try:
-        qmd_content = template_qmd.read_text()
-        qmd_content = qmd_content.replace("{{TITLE}}", base_name)
-    except OSError as e:
-        print(
-            f"Error: Could not read QMD template '{template_qmd}': {e}", file=sys.stderr
-        )
-        return 1
-
-    # Write QMD file
-    try:
-        qmd_file.write_text(qmd_content)
-    except OSError as e:
-        print(f"Error: Could not create file '{qmd_file}': {e}", file=sys.stderr)
+    # Create QMD file from template
+    if not create_qmd_file(qmd_file, template_qmd, base_name):
         return 1
 
     # Create render.sh script from template
-    try:
-        render_content = template_render.read_text()
-        # Replace placeholder with actual file name
-        render_content = render_content.replace("{{FILE_NAME}}", base_name)
-        render_script.write_text(render_content)
-        # Make it executable
-        render_script.chmod(0o755)
-    except OSError as e:
-        print(
-            f"Error: Could not create render script '{render_script}': {e}",
-            file=sys.stderr,
-        )
+    if not create_render_script(render_script, template_render, base_name):
         return 1
 
     # Create symlink to PowerPoint template
-    # Use relative path from target_dir to templates/simple-presentation.pptx
-    try:
-        # Calculate relative path from target_dir to template_pptx
-        rel_path = os.path.relpath(template_pptx, target_dir)
-        symlink_target.symlink_to(rel_path)
-    except OSError as e:
-        # On Windows, symlinks may fail without admin/developer mode
-        # Print warning but don't fail the command
-        print(f"Warning: Could not create symlink: {e}", file=sys.stderr)
-        print(
-            f"You may need to manually copy or link to {template_pptx}", file=sys.stderr
-        )
+    _ = create_template_symlink(symlink_target, template_pptx, target_dir, "PowerPoint")
 
     # Success output
     print(f"Created: {qmd_file}")
