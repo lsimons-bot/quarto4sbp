@@ -88,6 +88,28 @@ class TestLLMClientPrompt(unittest.TestCase):
         self.assertIn("Test prompt", prompt_arg)
 
     @patch("quarto4sbp.llm.client.llm")
+    def test_prompt_sets_api_base(self, mock_llm_module: MagicMock) -> None:
+        """Test that api_base is set from config.base_url."""
+        mock_response = MagicMock()
+        mock_response.text.return_value = "Test response"
+        mock_model = MagicMock()
+        mock_model.prompt.return_value = mock_response
+        mock_llm_module.get_model.return_value = mock_model
+
+        # Create config with custom base_url
+        config = LLMConfig(
+            model="test-model",
+            api_key="test-key",
+            base_url="https://custom.api.example.com/v1",
+        )
+        client = LLMClient(config)
+        response = client.prompt("Test prompt")
+
+        self.assertEqual(response, "Test response")
+        # Verify api_base was set on the model
+        self.assertEqual(mock_model.api_base, "https://custom.api.example.com/v1")
+
+    @patch("quarto4sbp.llm.client.llm")
     def test_prompt_with_overrides(self, mock_llm_module: MagicMock) -> None:
         """Test prompt with parameter overrides."""
         mock_response = MagicMock()

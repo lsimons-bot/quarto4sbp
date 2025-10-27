@@ -62,10 +62,12 @@ class LLMClient:
         )
         max_tokens = max_tokens or self.config.max_tokens
 
-        # Set up model with API key
+        # Set up model with API key and base URL
         llm_model = llm.get_model(model)
         if self.config.api_key:
             llm_model.key = self.config.api_key
+        if self.config.base_url:
+            llm_model.api_base = self.config.base_url
 
         # Build the full prompt with system message if provided
         full_prompt = prompt_text
