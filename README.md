@@ -131,6 +131,16 @@ Follow [Conventional Commits](https://conventionalcommits.org/) with types:
 - improvement: Improves code in some other way (that is not a feat or fix)
 - chore: Changes that take care of some other kind of chore that doesn't impact the main code
 
+### LLM Testing
+
+The project includes a mock-based testing infrastructure for LLM-powered features. This allows testing without making real API calls. See [docs/llm-testing-guide.md](docs/llm-testing-guide.md).
+
+**Running Example Tests:**
+```bash
+# Example tests are skipped by default
+RUN_EXAMPLE_TESTS=1 uv run pytest tests/test_llm_examples.py -v
+```
+
 ### Testing
 
 Unit and integration tests are located in `tests/`. Run them using:
