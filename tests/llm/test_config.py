@@ -35,7 +35,7 @@ class TestLoadConfig(unittest.TestCase):
 
         self.assertEqual(config.api_key, "test-key-123")
         self.assertEqual(config.model, "azure/gpt-5-mini")  # default
-        self.assertIsNone(config.base_url)
+        self.assertEqual(config.base_url, "https://litellm.sbp.ai/v1/")
         self.assertEqual(config.max_tokens, 10000)
         self.assertEqual(config.temperature, 0.7)
         self.assertEqual(config.timeout, 30)
@@ -181,7 +181,7 @@ model = "partial-model"
                         self.assertEqual(config.api_key, "partial-key")
                         self.assertEqual(config.model, "partial-model")
                         # Defaults
-                        self.assertIsNone(config.base_url)
+                        self.assertEqual(config.base_url, "https://litellm.sbp.ai/v1/")
                         self.assertEqual(config.max_tokens, 10000)
                         self.assertEqual(config.temperature, 0.7)
                 finally:
@@ -266,7 +266,7 @@ class TestLLMConfig(unittest.TestCase):
 
         self.assertEqual(config.model, "test-model")
         self.assertEqual(config.api_key, "test-key")
-        self.assertIsNone(config.base_url)
+        self.assertEqual(config.base_url, "https://litellm.sbp.ai/v1/")
         self.assertEqual(config.max_tokens, 10000)
         self.assertEqual(config.temperature, 0.7)
         self.assertEqual(config.timeout, 30)

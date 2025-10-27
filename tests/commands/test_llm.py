@@ -119,14 +119,14 @@ class TestCmdLlm(unittest.TestCase):
 
     @patch("quarto4sbp.commands.llm.LLMClient")
     @patch("quarto4sbp.commands.llm.load_config")
-    def test_config_without_base_url(
+    def test_config_with_default_base_url(
         self, mock_load_config: MagicMock, mock_client_class: MagicMock
     ) -> None:
-        """Test configuration display without base_url."""
+        """Test configuration display with default base_url."""
         mock_config = LLMConfig(
             model="test-model",
             api_key="test-key",
-            base_url=None,
+            base_url="https://litellm.sbp.ai/v1/",
             max_tokens=1000,
             temperature=0.7,
             timeout=30,
@@ -150,7 +150,8 @@ class TestCmdLlm(unittest.TestCase):
         self.assertEqual(result, 0)
         output = stdout.getvalue()
         self.assertIn("test-model", output)
-        self.assertNotIn("Base URL:", output)  # Should not show if None
+        self.assertIn("Base URL:", output)
+        self.assertIn("https://litellm.sbp.ai/v1/", output)
 
     @patch("quarto4sbp.commands.llm.LLMClient")
     @patch("quarto4sbp.commands.llm.load_config")

@@ -12,7 +12,7 @@ Environment variables:
 
 import os
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 from quarto4sbp.utils.config import load_config as load_toml_config
 
@@ -24,7 +24,7 @@ class LLMConfig:
     Attributes:
         model: Model name (e.g., "azure/gpt-5-mini")
         api_key: API key for authentication
-        base_url: Optional custom API endpoint URL
+        base_url: API endpoint URL (defaults to https://litellm.sbp.ai/v1/)
         max_tokens: Maximum tokens per request
         temperature: Sampling temperature (0.0-1.0)
         timeout: Request timeout in seconds
@@ -34,7 +34,7 @@ class LLMConfig:
 
     model: str
     api_key: str
-    base_url: Optional[str] = None
+    base_url: str = "https://litellm.sbp.ai/v1/"
     max_tokens: int = 10000
     temperature: float = 0.7
     timeout: int = 30
@@ -61,7 +61,7 @@ def load_config() -> LLMConfig:
     config_dict: dict[str, Any] = {
         "model": "azure/gpt-5-mini",
         "api_key": "",
-        "base_url": None,
+        "base_url": "https://litellm.sbp.ai/v1/",
         "max_tokens": 10000,
         "temperature": 0.7,
         "timeout": 30,
@@ -115,7 +115,7 @@ def load_config() -> LLMConfig:
     return LLMConfig(
         model=str(config_dict["model"]),
         api_key=str(config_dict["api_key"]),
-        base_url=str(config_dict["base_url"]) if config_dict["base_url"] else None,
+        base_url=str(config_dict["base_url"]),
         max_tokens=int(config_dict["max_tokens"])
         if isinstance(config_dict["max_tokens"], int)
         else 10000,

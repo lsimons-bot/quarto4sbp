@@ -95,6 +95,162 @@ Step by step instructions:
 - Select **General**
 - Uncheck **Update automatic links at open**
 
+## LLM Setup and Configuration
+
+The `q4s` CLI includes AI-powered features that use Large Language Models (LLMs) for tasks like tone-of-voice rewriting and image generation. These features require LLM API access.
+
+### Prerequisites
+
+You'll need:
+- An API key for our [LiteLLM Proxy](https://schubergphilis1.atlassian.net/wiki/spaces/SBPAI/pages/861634709/LLM+Proxy)
+- Your VPN connection open
+
+### Quick Setup
+
+The simplest way to get started is with an environment variable:
+
+```bash
+# Set your API key
+export OPENAI_API_KEY="sk-..."
+
+# Test the connection
+q4s llm test
+```
+
+### Configuration Options
+
+#### Environment Variables
+
+The following environment variables are supported:
+
+- **`OPENAI_API_KEY`** (required): Your API key for authentication
+- **`OPENAI_API_MODEL`** (optional): Override the default model
+- **`OPENAI_API_URL`** (optional): Custom API endpoint URL
+
+Example:
+```bash
+export OPENAI_API_KEY="sk-..."
+export OPENAI_API_MODEL="azure/gpt-5-mini"
+export OPENAI_API_URL="https://litellm.sbp.ai/v1"
+```
+
+#### Configuration Files
+
+For more advanced configuration, you can use TOML files. q4s supports two configuration locations:
+
+1. **User config**: `~/.config/q4s.toml` (applies to all projects)
+2. **Project config**: `./q4s.toml` (overrides user settings for this project)
+
+**Example `~/.config/q4s.toml`:**
+```toml
+[llm]
+model = "azure/gpt-5-mini"           # Default model
+api_key = "${OPENAI_API_KEY}"        # Environment variable expansion
+max_tokens = 10000                   # Maximum tokens per request
+temperature = 0.7                    # Sampling temperature (0.0-1.0)
+timeout = 30                         # Request timeout in seconds
+
+[llm.retry]
+max_attempts = 3                     # Retry attempts on failure
+backoff_factor = 2                   # Exponential backoff multiplier
+```
+
+**Example project-specific `q4s.toml`:**
+```toml
+[llm]
+model = "gpt-4"                      # Use GPT-4 for this project
+temperature = 0.5                    # More deterministic output
+max_tokens = 5000                    # Lower token limit
+```
+
+#### Configuration Hierarchy
+
+Settings are loaded in the following order (later overrides earlier):
+
+1. Default values (built into q4s)
+2. User config (`~/.config/q4s.toml`)
+3. Project config (`./q4s.toml`)
+4. Environment variables (highest priority)
+
+This allows you to set global defaults in your user config, override them per-project, and use environment variables for temporary changes or CI/CD.
+
+#### Environment Variable Expansion
+
+Configuration files support `${VAR_NAME}` syntax for environment variables:
+
+```toml
+[llm]
+api_key = "${OPENAI_API_KEY}"        # Expands to env var value
+base_url = "${CUSTOM_API_URL}"       # Works for any setting
+```
+
+This is useful for keeping secrets out of version control while still using configuration files.
+
+### Testing Your Setup
+
+After configuring your API key, test the connection:
+
+```bash
+q4s llm test
+```
+
+This command:
+- Verifies your configuration is loaded correctly
+- Tests API connectivity with a simple prompt
+- Displays response time and model information
+- Helps diagnose connection issues
+
+If the test succeeds, you'll see:
+```
+✓ Configuration loaded successfully
+  Model: azure/gpt-5-mini
+  Max tokens: 10000
+  Temperature: 0.7
+  Timeout: 30s
+
+✓ LLM client initialized
+
+Testing API connectivity...
+✓ API call successful
+  Response: Hello from LLM
+  Elapsed time: 1.23s
+
+LLM integration is working correctly!
+```
+
+### Troubleshooting
+
+**Error: "API key not configured"**
+- Set `OPENAI_API_KEY` environment variable, or
+- Add `api_key` to your `q4s.toml` file
+
+**Error: "API call failed"**
+- Check your API key is valid and has sufficient permissions
+- Verify network connectivity to the API endpoint
+- Ensure your API key has credits/quota available
+- Check if you need to set a custom `base_url`
+
+**Slow responses or timeouts**
+- Increase `timeout` in your configuration
+- Check your network connection
+- Try a different model (some are faster than others)
+
+### Available Models
+
+The default model is `azure/gpt-5-mini`, but you can use any model supported by your LLM provider. Common options:
+
+- `azure/gpt-5` - capable, slower
+- `azure/gpt-5-mini` - Default, balanced performance
+- `aws/claude-4-5-sonnet` - capable alternative from Anthropic
+
+### Security Best Practices
+
+- **Never commit API keys to version control**
+- Use environment variables or expand them in config files: `api_key = "${OPENAI_API_KEY}"`
+- Set appropriate file permissions on config files: `chmod 600 ~/.config/q4s.toml`
+- Use project-specific API keys when possible
+- Rotate keys regularly
+
 ## Development
 
 ### Spec-Based Development
