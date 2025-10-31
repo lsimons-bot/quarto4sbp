@@ -4,8 +4,8 @@ Python tool for working with [quarto](https://quarto.org/) in [Schuberg Philis](
 
 ## Prerequisites
 
-- **Python 3.13+** with `uv` package manager: try `brew install uv` on mac
-- [quarto](https://quarto.org/) CLI installed: try `brew install quarto` on mac
+- **Python 3.13+** with `uv` package manager: try `brew install uv` on Mac
+- [quarto](https://quarto.org/) CLI installed: try `brew install quarto` on Mac
 - for PDF export:
   - **Mac OS X**
   - **Microsoft Office**:
@@ -89,7 +89,7 @@ You can disable automatic link updates in Word preferences:
 
 ![word preference to not auto-update links](docs/images/word-disable-automatic-link-update.png)
 
-Step by step instructions:
+Step-by-step instructions:
 - Open **Microsoft Word**
 - Go to **Word** > **Preferences**
 - Select **General**
@@ -255,13 +255,13 @@ The default model is `azure/gpt-5-mini`, but you can use any model supported by 
 
 ### Spec-Based Development
 
-This project follows a spec-based development approach documented in [`docs/spec/`](docs/spec/).
+This project follows a spec-based development approach documented in [`docs/spec`](docs/spec).
 
 ### Beads issue tracking
 
 This project uses [beads (bd)](https://github.com/steveyegge/beads) for issue tracking.
 
-To install try `brew tap steveyegge/beads && brew install bd` on mac.
+To install try `brew tap steveyegge/beads && brew install bd` on Mac.
 
 ### Development Guidelines
 - See [CLAUDE.md](CLAUDE.md) for Claude Code-specific guidance
@@ -282,7 +282,7 @@ Follow [Conventional Commits](https://conventionalcommits.org/) with types:
 - perf: A code change that improves performance
 - refactor: A code change that neither fixes a bug nor adds a feature
 - revert: undoing (an)other commit(s)
-- style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+- style: Changes that do not affect the meaning of the code (white-space, formatting, missing semicolons, etc.)
 - test: Adding missing tests or correcting existing tests
 - improvement: Improves code in some other way (that is not a feat or fix)
 - chore: Changes that take care of some other kind of chore that doesn't impact the main code

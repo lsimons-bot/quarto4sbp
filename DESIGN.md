@@ -1,6 +1,6 @@
 # Design Decisions
 
-This document captures key design decisions for the quarto4sbp project. For detailed feature specifications, see the [specs directory](docs/spec/).
+This document captures key design decisions for the quarto4sbp project. For detailed feature specifications, see the [specs directory](docs/spec).
 
 ## Core Philosophy
 - **Dependency-free core**: Core functionality uses only Python3 standard library (os, sys, datetime, argparse, unittest)
@@ -34,7 +34,7 @@ This document captures key design decisions for the quarto4sbp project. For deta
 - **Subprocess calls**: Use `check=True` and catch `CalledProcessError` with context
 
 ## Testing Strategy
-- **Integration-first**: Prefer end-to-end tests over mocking for reliability
+- **Integration-first**: Prefer end-to-end tests to mocking for reliability
 - **Test separation**: Unit tests in dedicated `tests/` directory using Python's unittest framework
 - **CLI testing**: Test both standalone execution and programmatic usage
 - **Temporary directories**: Use temp paths for file system tests to avoid conflicts

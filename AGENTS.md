@@ -278,7 +278,7 @@ See [README.md](README.md) for detailed installation and usage instructions.
   - perf: A code change that improves performance
   - refactor: A code change that neither fixes a bug nor adds a feature
   - revert: undoing (an)other commit(s)
-  - style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+  - style: Changes that do not affect the meaning of the code (white-space, formatting, missing semicolons, etc.)
   - test: Adding missing tests or correcting existing tests
   - improvement: Improves code in some other way (that is not a feat or fix)
   - chore: Changes that take care of some other kind of chore that doesn't impact the main code
