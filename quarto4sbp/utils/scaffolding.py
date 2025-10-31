@@ -135,7 +135,7 @@ def create_render_script(
 
 
 def create_template_symlink(
-    symlink_target: Path, template_path: Path, target_dir: Path, format_name: str
+    symlink_target: Path, template_path: Path, target_dir: Path
 ) -> bool:
     """Create a symlink to a template file.
 
@@ -143,7 +143,6 @@ def create_template_symlink(
         symlink_target: Path where symlink should be created
         template_path: Path to template file to link to
         target_dir: Directory containing the symlink
-        format_name: Human-readable format name for warning messages
 
     Returns:
         True if successful, False with warning message if symlink fails
@@ -160,3 +159,76 @@ def create_template_symlink(
             f"You may need to manually copy or link to {template_path}", file=sys.stderr
         )
         return False
+
+
+def create_quarto_project(
+    dir_name: str,
+    qmd_template_name: str,
+    output_type: str,
+    templates: dict[str, str],
+) -> int:
+    """Create a new Quarto project with specified templates.
+
+    Args:
+        dir_name: Directory name for the new project
+        qmd_template_name: Name of the QMD template file
+        output_type: Description of output type for success message
+        templates: Dict mapping symlink names to template file names
+                  e.g., {"simple-presentation.pptx": "simple-presentation.pptx"}
+
+    Returns:
+        Exit code (0 for success, 1 for errors)
+    """
+    # Validate directory name
+    if not validate_directory_name(dir_name):
+        print(f"Error: Invalid directory name '{dir_name}'", file=sys.stderr)
+        return 1
+
+    # Get paths
+    target_dir = Path(dir_name)
+    base_name = target_dir.name
+    qmd_file = target_dir / f"{base_name}.qmd"
+    render_script = target_dir / "render.sh"
+
+    # Get template paths
+    template_qmd = get_template_path(qmd_template_name)
+    template_render = get_template_path("render.sh.template")
+
+    # Verify QMD and render templates exist
+    if not verify_template_exists(template_qmd, "QMD template"):
+        return 1
+    if not verify_template_exists(template_render, "Render script template"):
+        return 1
+
+    # Verify all output templates exist
+    template_paths = {}
+    for symlink_name, template_name in templates.items():
+        template_path = get_template_path(template_name)
+        if not verify_template_exists(template_path, f"Template {template_name}"):
+            return 1
+        template_paths[symlink_name] = template_path
+
+    # Create directory
+    if not create_directory(target_dir):
+        return 1
+
+    # Create QMD file from template
+    if not create_qmd_file(qmd_file, template_qmd, base_name):
+        return 1
+
+    # Create render script from template
+    if not create_render_script(render_script, template_render, base_name):
+        return 1
+
+    # Create symlinks to templates
+    for symlink_name, template_path in template_paths.items():
+        symlink_target = target_dir / symlink_name
+        create_template_symlink(symlink_target, template_path, target_dir)
+
+    # Success output
+    print(f"Created: {qmd_file}")
+    print(f"Output: {output_type}")
+    print(f"Hint: Run 'cd {target_dir} && ./render.sh' to generate the output")
+
+    return 0
+
