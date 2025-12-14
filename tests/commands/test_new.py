@@ -64,7 +64,7 @@ class TestCmdNew(unittest.TestCase):
         self.assertEqual(result, 0)
         self.assertIn("Created: test-project/test-project.qmd", stdout_output)
         self.assertIn(
-            "Outputs: Both PowerPoint (.pptx) and Word (.docx)", stdout_output
+            "Output: Both PowerPoint (.pptx) and Word (.docx)", stdout_output
         )
         self.assertIn("Hint: Run 'cd test-project && ./render.sh'", stdout_output)
 
@@ -210,7 +210,7 @@ class TestCmdNewErrorCases(unittest.TestCase):
                 stderr_output = sys.stderr.getvalue()
 
                 self.assertEqual(result, 1)
-                self.assertIn("Error: PowerPoint template not found", stderr_output)
+                self.assertIn("Error: Template simple-presentation.pptx not found", stderr_output)
             finally:
                 backup_path.rename(template_pptx)
 
@@ -230,7 +230,7 @@ class TestCmdNewErrorCases(unittest.TestCase):
                 stderr_output = sys.stderr.getvalue()
 
                 self.assertEqual(result, 1)
-                self.assertIn("Error: Word template not found", stderr_output)
+                self.assertIn("Error: Template simple-document.docx not found", stderr_output)
             finally:
                 backup_path.rename(template_docx)
 

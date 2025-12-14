@@ -1,6 +1,6 @@
 # Design Decisions
 
-This document captures key design decisions for the quarto4sbp project. For detailed feature specifications, see the [specs directory](docs/spec/).
+This document captures key design decisions for the quarto4sbp project. For detailed feature specifications, see the [specs directory](docs/spec).
 
 ## Core Philosophy
 - **Dependency-free core**: Core functionality uses only Python3 standard library (os, sys, datetime, argparse, unittest)
@@ -34,7 +34,7 @@ This document captures key design decisions for the quarto4sbp project. For deta
 - **Subprocess calls**: Use `check=True` and catch `CalledProcessError` with context
 
 ## Testing Strategy
-- **Integration-first**: Prefer end-to-end tests over mocking for reliability
+- **Integration-first**: Prefer end-to-end tests to mocking for reliability
 - **Test separation**: Unit tests in dedicated `tests/` directory using Python's unittest framework
 - **CLI testing**: Test both standalone execution and programmatic usage
 - **Temporary directories**: Use temp paths for file system tests to avoid conflicts
@@ -43,6 +43,13 @@ This document captures key design decisions for the quarto4sbp project. For deta
 - **Type safety**: Comprehensive type annotations for better IDE support and static analysis
 - **Acceptable diagnostics**: Some remaining warnings for argparse/unittest patterns that are inherently dynamic
 - **Pyright ignores**: Use specific error codes (`reportAny`, `reportImplicitOverride`) when needed
+
+## LLM Integration
+- **External LiteLLM service**: Use remote LiteLLM for provider independence, avoid bundling provider SDKs
+- **llm library**: Use Simon Willison's `llm` library for simple, lightweight API access
+- **Configuration**: TOML config files (`~/.config/q4s.toml` or `q4s.toml`) with environment variable overrides
+- **Prompts as code**: Store prompts as `.txt` files in `prompts/` directory, organized by feature
+- **Optional dependency**: LLM features are opt-in, core functionality remains dependency-free
 
 ## Development Process
 - **Spec-driven development**: New features documented in `docs/spec/` before implementation

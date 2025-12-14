@@ -5,12 +5,14 @@ import sys
 
 from quarto4sbp.commands import (
     cmd_help,
+    cmd_llm,
     cmd_new,
     cmd_new_docx,
     cmd_new_pptx,
     cmd_pdf,
     cmd_pdf_docx,
     cmd_pdf_pptx,
+    cmd_tov,
 )
 
 
@@ -32,7 +34,7 @@ def main(args: list[str] | None = None) -> int:
     parser.add_argument(
         "command",
         nargs="?",
-        help="Command to run (help, new, new-pptx, new-docx, pdf, pdf-pptx, pdf-docx)",
+        help="Command to run (help, llm, new, new-pptx, new-docx, pdf, pdf-pptx, pdf-docx, tov)",
     )
 
     parser.add_argument(
@@ -41,10 +43,11 @@ def main(args: list[str] | None = None) -> int:
         help="Arguments for the command",
     )
 
-    parsed = parser.parse_args(args)
+    parsed, unknown = parser.parse_known_args(args)
 
     command = parsed.command
-    command_args = parsed.command_args
+    # Combine parsed command_args with unknown args to pass to subcommand
+    command_args = parsed.command_args + unknown
 
     # Default to help if no command provided
     if command is None:
@@ -53,6 +56,8 @@ def main(args: list[str] | None = None) -> int:
     # Route to appropriate subcommand
     if command == "help":
         return cmd_help()
+    elif command == "llm":
+        return cmd_llm(command_args)
     elif command == "new":
         return cmd_new(command_args)
     elif command == "new-pptx":
@@ -65,6 +70,8 @@ def main(args: list[str] | None = None) -> int:
         return cmd_pdf_pptx(command_args)
     elif command == "pdf-docx":
         return cmd_pdf_docx(command_args)
+    elif command == "tov":
+        return cmd_tov(command_args)
     else:
         print(f"Error: Unknown command '{command}'", file=sys.stderr)
         print("Run 'q4s help' for usage information", file=sys.stderr)

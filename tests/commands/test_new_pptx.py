@@ -213,7 +213,7 @@ class TestCmdNewPptxErrorCases(unittest.TestCase):
                 stderr_output = sys.stderr.getvalue()
 
                 self.assertEqual(result, 1)
-                self.assertIn("Error: Template not found", stderr_output)
+                self.assertIn("Error: QMD template not found", stderr_output)
             finally:
                 backup_path.rename(template_qmd)
 
@@ -234,7 +234,7 @@ class TestCmdNewPptxErrorCases(unittest.TestCase):
                 stderr_output = sys.stderr.getvalue()
 
                 self.assertEqual(result, 1)
-                self.assertIn("Error: PowerPoint template not found", stderr_output)
+                self.assertIn("Error: Template simple-presentation.pptx not found", stderr_output)
             finally:
                 backup_path.rename(template_pptx)
 

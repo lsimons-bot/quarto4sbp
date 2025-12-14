@@ -100,9 +100,9 @@ class TestPdfIntegration(unittest.TestCase):
         self.assertGreater(pdf_path.stat().st_mtime, test_pptx.stat().st_mtime)
 
         # find_stale_pptx should not include this file
-        from quarto4sbp.commands.pdf_pptx import find_stale_pptx
+        from quarto4sbp.utils.pdf_export import find_stale_files
 
-        stale = find_stale_pptx(self.test_dir)
+        stale = find_stale_files(self.test_dir, "pptx")
         self.assertEqual(len(stale), 0, "PDF is up to date, should not be stale")
 
     def test_export_updates_when_pptx_newer(self) -> None:
@@ -126,9 +126,9 @@ class TestPdfIntegration(unittest.TestCase):
         self.assertGreater(test_pptx.stat().st_mtime, pdf_path.stat().st_mtime)
 
         # find_stale_pptx should include this file
-        from quarto4sbp.commands.pdf_pptx import find_stale_pptx
+        from quarto4sbp.utils.pdf_export import find_stale_files
 
-        stale = find_stale_pptx(self.test_dir)
+        stale = find_stale_files(self.test_dir, "pptx")
         self.assertEqual(len(stale), 1, "PPTX is newer, should be stale")
         self.assertEqual(stale[0], test_pptx)
 

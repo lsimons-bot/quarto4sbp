@@ -11,12 +11,12 @@ from unittest.mock import MagicMock, patch
 from quarto4sbp.commands.pdf_pptx import (
     cmd_pdf_pptx,
     export_pptx_to_pdf,
-    find_stale_pptx,
 )
+from quarto4sbp.utils.pdf_export import find_stale_files
 
 
 class TestFindStalePptx(unittest.TestCase):
-    """Tests for find_stale_pptx function."""
+    """Tests for find_stale_files function with pptx extension."""
 
     def test_no_pptx_files(self) -> None:
         """Test with directory containing no PPTX files."""
@@ -26,7 +26,7 @@ class TestFindStalePptx(unittest.TestCase):
             (directory / "test.txt").write_text("test")
             (directory / "test.pdf").write_text("pdf")
 
-            result = find_stale_pptx(directory)
+            result = find_stale_files(directory, "pptx")
             self.assertEqual(result, [])
 
     def test_pptx_without_pdf(self) -> None:
@@ -36,7 +36,7 @@ class TestFindStalePptx(unittest.TestCase):
             pptx_file = directory / "presentation.pptx"
             pptx_file.write_text("pptx content")
 
-            result = find_stale_pptx(directory)
+            result = find_stale_files(directory, "pptx")
             self.assertEqual(len(result), 1)
             self.assertEqual(result[0], pptx_file)
 
@@ -53,7 +53,7 @@ class TestFindStalePptx(unittest.TestCase):
             # Create/modify PPTX after
             pptx_file.write_text("new pptx")
 
-            result = find_stale_pptx(directory)
+            result = find_stale_files(directory, "pptx")
             self.assertEqual(len(result), 1)
             self.assertEqual(result[0], pptx_file)
 
@@ -70,7 +70,7 @@ class TestFindStalePptx(unittest.TestCase):
             # Create PDF after
             pdf_file.write_text("newer pdf")
 
-            result = find_stale_pptx(directory)
+            result = find_stale_files(directory, "pptx")
             self.assertEqual(result, [])
 
     def test_excludes_symlinks(self) -> None:
@@ -87,7 +87,7 @@ class TestFindStalePptx(unittest.TestCase):
                 # Skip test if symlinks not supported (e.g., Windows without admin)
                 self.skipTest("Symlinks not supported on this platform")
 
-            result = find_stale_pptx(directory)
+            result = find_stale_files(directory, "pptx")
             # Should only find real_file, not symlink
             self.assertEqual(len(result), 1)
             self.assertEqual(result[0], real_file)
@@ -107,7 +107,7 @@ class TestFindStalePptx(unittest.TestCase):
             main_file = directory / "presentation.pptx"
             main_file.write_text("main presentation")
 
-            result = find_stale_pptx(directory)
+            result = find_stale_files(directory, "pptx")
             # Should only find main_file, not template
             self.assertEqual(len(result), 1)
             self.assertEqual(result[0], main_file)
@@ -135,7 +135,7 @@ class TestFindStalePptx(unittest.TestCase):
             sleep(0.01)
             pdf3.write_text("new pdf")
 
-            result = find_stale_pptx(directory)
+            result = find_stale_files(directory, "pptx")
             self.assertEqual(len(result), 2)
             self.assertIn(file1, result)
             self.assertIn(file2, result)
@@ -145,7 +145,7 @@ class TestFindStalePptx(unittest.TestCase):
 class TestExportPptxToPdf(unittest.TestCase):
     """Tests for export_pptx_to_pdf function."""
 
-    @patch("quarto4sbp.commands.pdf_pptx.subprocess.run")
+    @patch("quarto4sbp.utils.pdf_export.subprocess.run")
     def test_export_success(self, mock_run: MagicMock) -> None:
         """Test successful PDF export."""
         with TemporaryDirectory() as tmpdir:
@@ -172,7 +172,7 @@ class TestExportPptxToPdf(unittest.TestCase):
             self.assertTrue(pdf_file.exists())
             self.assertEqual(pdf_file.read_text(), "pdf content")
 
-    @patch("quarto4sbp.commands.pdf_pptx.subprocess.run")
+    @patch("quarto4sbp.utils.pdf_export.subprocess.run")
     def test_export_applescript_fails(self, mock_run: MagicMock) -> None:
         """Test handling of AppleScript failure."""
         with TemporaryDirectory() as tmpdir:
@@ -199,7 +199,7 @@ class TestExportPptxToPdf(unittest.TestCase):
             finally:
                 sys.stdout = old_stdout
 
-    @patch("quarto4sbp.commands.pdf_pptx.subprocess.run")
+    @patch("quarto4sbp.utils.pdf_export.subprocess.run")
     def test_export_pdf_not_created(self, mock_run: MagicMock) -> None:
         """Test handling when PowerPoint doesn't create PDF."""
         with TemporaryDirectory() as tmpdir:

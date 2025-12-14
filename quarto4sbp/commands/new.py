@@ -1,8 +1,8 @@
 """Unified new command for creating documents with both PowerPoint and Word outputs."""
 
-import os
 import sys
-from pathlib import Path
+
+from quarto4sbp.utils.scaffolding import create_quarto_project
 
 
 def cmd_new(args: list[str]) -> int:
@@ -21,131 +21,12 @@ def cmd_new(args: list[str]) -> int:
         print("Usage: q4s new <directory>", file=sys.stderr)
         return 1
 
-    dir_name = args[0]
-
-    # Validate directory name
-    if not dir_name or dir_name.startswith("-"):
-        print(f"Error: Invalid directory name '{dir_name}'", file=sys.stderr)
-        return 1
-
-    # Get paths
-    target_dir = Path(dir_name)
-    base_name = target_dir.name
-    qmd_file = target_dir / f"{base_name}.qmd"
-    pptx_symlink = target_dir / "simple-presentation.pptx"
-    docx_symlink = target_dir / "simple-document.docx"
-    render_script = target_dir / "render.sh"
-
-    # Find the templates directory
-    project_root = Path(__file__).parent.parent.parent
-    template_pptx = project_root / "templates" / "simple-presentation.pptx"
-    template_docx = project_root / "templates" / "simple-document.docx"
-    template_render = project_root / "templates" / "render.sh.template"
-    template_qmd = project_root / "templates" / "combined-document.qmd"
-
-    # Verify templates exist
-    if not template_pptx.exists():
-        print(
-            f"Error: PowerPoint template not found at {template_pptx}",
-            file=sys.stderr,
-        )
-        return 1
-
-    if not template_docx.exists():
-        print(f"Error: Word template not found at {template_docx}", file=sys.stderr)
-        return 1
-
-    if not template_render.exists():
-        print(
-            f"Error: Render script template not found at {template_render}",
-            file=sys.stderr,
-        )
-        return 1
-
-    if not template_qmd.exists():
-        print(
-            f"Error: QMD template not found at {template_qmd}",
-            file=sys.stderr,
-        )
-        return 1
-
-    # Check if qmd file already exists
-    if qmd_file.exists():
-        print(f"Error: File already exists: {qmd_file}", file=sys.stderr)
-        return 1
-
-    # Create directory if it doesn't exist
-    try:
-        target_dir.mkdir(parents=True, exist_ok=True)
-    except OSError as e:
-        print(f"Error: Could not create directory '{target_dir}': {e}", file=sys.stderr)
-        return 1
-
-    # Load and customize QMD template
-    try:
-        qmd_content = template_qmd.read_text()
-        qmd_content = qmd_content.replace("{{TITLE}}", base_name)
-    except OSError as e:
-        print(
-            f"Error: Could not read QMD template '{template_qmd}': {e}", file=sys.stderr
-        )
-        return 1
-
-    # Write QMD file
-    try:
-        qmd_file.write_text(qmd_content)
-    except OSError as e:
-        print(f"Error: Could not create file '{qmd_file}': {e}", file=sys.stderr)
-        return 1
-
-    # Create render.sh script from template
-    try:
-        render_content = template_render.read_text()
-        render_content = render_content.replace("{{FILE_NAME}}", base_name)
-        render_script.write_text(render_content)
-        render_script.chmod(0o755)
-    except OSError as e:
-        print(
-            f"Error: Could not create render script '{render_script}': {e}",
-            file=sys.stderr,
-        )
-        return 1
-
-    # Create symlinks to both templates
-    created_symlinks: list[str] = []
-    failed_symlinks: list[tuple[str, Path, OSError]] = []
-
-    # PowerPoint symlink
-    try:
-        rel_path_pptx = os.path.relpath(template_pptx, target_dir)
-        pptx_symlink.symlink_to(rel_path_pptx)
-        created_symlinks.append("PowerPoint")
-    except OSError as e:
-        failed_symlinks.append(("PowerPoint", template_pptx, e))
-
-    # Word symlink
-    try:
-        rel_path_docx = os.path.relpath(template_docx, target_dir)
-        docx_symlink.symlink_to(rel_path_docx)
-        created_symlinks.append("Word")
-    except OSError as e:
-        failed_symlinks.append(("Word", template_docx, e))
-
-    # Print warnings for failed symlinks (non-fatal)
-    if failed_symlinks:
-        for format_name, template_path, error in failed_symlinks:
-            print(
-                f"Warning: Could not create {format_name} symlink: {error}",
-                file=sys.stderr,
-            )
-            print(
-                f"You may need to manually copy or link to {template_path}",
-                file=sys.stderr,
-            )
-
-    # Success output
-    print(f"Created: {qmd_file}")
-    print("Outputs: Both PowerPoint (.pptx) and Word (.docx)")
-    print(f"Hint: Run 'cd {target_dir} && ./render.sh' to generate both formats")
-
-    return 0
+    return create_quarto_project(
+        dir_name=args[0],
+        qmd_template_name="combined-document.qmd",
+        output_type="Both PowerPoint (.pptx) and Word (.docx)",
+        templates={
+            "simple-presentation.pptx": "simple-presentation.pptx",
+            "simple-document.docx": "simple-document.docx",
+        },
+    )
