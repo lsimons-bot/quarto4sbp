@@ -675,6 +675,7 @@ RUN_INTEGRATION_TESTS=1 uv run pytest -v
 
 - [spec-009: LLM Integration Architecture](spec/009-llm-integration.md) - Overall LLM architecture
 - [spec-010: LLM Testing Infrastructure](spec/010-llm-testing.md) - Testing infrastructure design
+- [lsimons-llm](https://github.com/lsimons-bot/lsimons-llm) - Shared LLM client library
 - [AGENTS.md](../AGENTS.md) - Development workflow and guidelines
 - [README.md](../README.md) - Project overview and setup
 

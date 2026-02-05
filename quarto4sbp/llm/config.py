@@ -4,10 +4,10 @@ Supports loading configuration from:
 1. TOML files (~/.config/q4s.toml and/or q4s.toml in project root)
 2. Environment variables (override TOML settings)
 
-Environment variables:
-- OPENAI_API_KEY: API key for LLM provider
-- OPENAI_API_URL: Custom API endpoint URL
-- OPENAI_API_MODEL: Model name override
+Environment variables (same as lsimons-llm for consistency):
+- LLM_API_KEY: API key for LLM provider
+- LLM_BASE_URL: Custom API endpoint URL
+- LLM_MODEL: Model name override
 """
 
 import os
@@ -94,20 +94,20 @@ def load_config() -> LLMConfig:
             if "backoff_factor" in retry_section:
                 config_dict["backoff_factor"] = retry_section["backoff_factor"]
 
-    # Environment variables override everything
-    if api_key := os.environ.get("OPENAI_API_KEY"):
+    # Environment variables override everything (same names as lsimons-llm)
+    if api_key := os.environ.get("LLM_API_KEY"):
         config_dict["api_key"] = api_key
 
-    if api_url := os.environ.get("OPENAI_API_URL"):
+    if api_url := os.environ.get("LLM_BASE_URL"):
         config_dict["base_url"] = api_url
 
-    if model := os.environ.get("OPENAI_API_MODEL"):
+    if model := os.environ.get("LLM_MODEL"):
         config_dict["model"] = model
 
     # Validate API key is set
     if not config_dict["api_key"]:
         raise ValueError(
-            "API key not configured. Set OPENAI_API_KEY environment variable "
+            "API key not configured. Set LLM_API_KEY environment variable "
             "or configure api_key in ~/.config/q4s.toml"
         )
 

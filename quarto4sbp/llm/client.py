@@ -1,29 +1,23 @@
 """LLM client wrapper for AI-powered features.
 
-This module provides a thin wrapper around the llm library for LLM interactions.
+This module provides a thin wrapper around lsimons-llm for LLM interactions,
+adding TOML configuration file support on top of the base environment variable config.
 """
 
 import time
-
-import llm
 from typing import Any, Optional
+
+from lsimons_llm import LLMClient as BaseLLMClient
+from lsimons_llm.config import LLMConfig as BaseLLMConfig
 
 from quarto4sbp.llm.config import LLMConfig, load_config
 
-import importlib
-from llm.plugins import pm
-
-# Register our custom LLM plugin
-plugin = "quarto4sbp.llm.plugin"
-mod = importlib.import_module(plugin)
-pm.register(mod, plugin)
-
 
 class LLMClient:
-    """Wrapper around llm library for LLM interactions.
+    """Wrapper around lsimons-llm client for LLM interactions.
 
     This client provides a simple interface for LLM prompting with support for
-    retries, error handling, and token tracking.
+    retries, error handling, and TOML configuration file support.
 
     Example:
         client = LLMClient()
@@ -39,6 +33,18 @@ class LLMClient:
                    configuration files and environment.
         """
         self.config = config or load_config()
+
+        # Create base config for lsimons-llm client
+        base_config = BaseLLMConfig(
+            base_url=self.config.base_url,
+            api_key=self.config.api_key,
+            model=self.config.model,
+            max_tokens=self.config.max_tokens,
+            temperature=self.config.temperature,
+            timeout=self.config.timeout,
+            max_retries=self.config.max_attempts,
+        )
+        self._client = BaseLLMClient(base_config)
 
     def prompt(
         self,
@@ -63,54 +69,21 @@ class LLMClient:
         Raises:
             ValueError: If API call fails after retries
         """
-        # Use config defaults if not overridden
-        model = model or self.config.model
-        temperature = (
-            temperature if temperature is not None else self.config.temperature
-        )
-        max_tokens = max_tokens or self.config.max_tokens
-
-        # Set up model with API key and base URL
-        llm_model = llm.get_model(model)
-        if self.config.api_key:
-            llm_model.key = self.config.api_key
-        if self.config.base_url:
-            setattr(llm_model, "api_base", self.config.base_url)
-
-        # Build the full prompt with system message if provided
-        full_prompt = prompt_text
+        # Build messages list
+        messages: list[dict[str, Any]] = []
         if system:
-            full_prompt = f"{system}\n\n{prompt_text}"
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt_text})
 
-        # Retry logic with exponential backoff
-        last_error: Optional[Exception] = None
-        for attempt in range(self.config.max_attempts):
-            try:
-                # Make the API call
-                response = llm_model.prompt(  # pyright: ignore[reportUnknownMemberType]
-                    full_prompt,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    # not supported for reasoning models:
-                    # timeout=self.config.timeout,
-                )
-
-                # Extract text from response
-                return str(response.text())
-
-            except Exception as e:
-                last_error = e
-                # If this isn't the last attempt, wait before retrying
-                if attempt < self.config.max_attempts - 1:
-                    wait_time = self.config.backoff_factor**attempt
-                    time.sleep(wait_time)
-                continue
-
-        # All retries failed
-        error_msg = f"LLM API call failed after {self.config.max_attempts} attempts"
-        if last_error:
-            error_msg += f": {last_error}"
-        raise ValueError(error_msg)
+        try:
+            return self._client.chat(
+                messages,
+                model=model,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+        except Exception as e:
+            raise ValueError(f"LLM API call failed: {e}") from e
 
     def test_connectivity(self) -> dict[str, Any]:
         """Test LLM connectivity with a simple prompt.
@@ -146,6 +119,16 @@ class LLMClient:
                 "elapsed_time": elapsed,
                 "model": self.config.model,
             }
+
+    def close(self) -> None:
+        """Close the underlying HTTP client."""
+        self._client.close()
+
+    def __enter__(self) -> "LLMClient":
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        self.close()
 
 
 def create_client(config: Optional[LLMConfig] = None) -> LLMClient:

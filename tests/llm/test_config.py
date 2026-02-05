@@ -29,7 +29,7 @@ class TestLoadConfig(unittest.TestCase):
 
     def test_load_config_from_env_only(self) -> None:
         """Test loading configuration from environment variables only."""
-        os.environ["OPENAI_API_KEY"] = "test-key-123"
+        os.environ["LLM_API_KEY"] = "test-key-123"
 
         config = load_config()
 
@@ -42,9 +42,9 @@ class TestLoadConfig(unittest.TestCase):
 
     def test_load_config_with_all_env_vars(self) -> None:
         """Test loading with all environment variables set."""
-        os.environ["OPENAI_API_KEY"] = "env-key"
-        os.environ["OPENAI_API_URL"] = "https://api.example.com"
-        os.environ["OPENAI_API_MODEL"] = "gpt-4"
+        os.environ["LLM_API_KEY"] = "env-key"
+        os.environ["LLM_BASE_URL"] = "https://api.example.com"
+        os.environ["LLM_MODEL"] = "gpt-4"
 
         config = load_config()
 
@@ -55,13 +55,13 @@ class TestLoadConfig(unittest.TestCase):
     def test_load_config_missing_api_key(self) -> None:
         """Test that missing API key raises ValueError."""
         # Clear any API key from environment
-        os.environ.pop("OPENAI_API_KEY", None)
+        os.environ.pop("LLM_API_KEY", None)
 
         with self.assertRaises(ValueError) as ctx:
             load_config()
 
         self.assertIn("API key not configured", str(ctx.exception))
-        self.assertIn("OPENAI_API_KEY", str(ctx.exception))
+        self.assertIn("LLM_API_KEY", str(ctx.exception))
 
     def test_load_config_from_toml_file(self) -> None:
         """Test loading configuration from TOML file."""
@@ -119,9 +119,9 @@ api_key = "toml-key"
 base_url = "https://toml.api.com"
 """)
 
-                        os.environ["OPENAI_API_KEY"] = "env-key-override"
-                        os.environ["OPENAI_API_MODEL"] = "env-model-override"
-                        os.environ["OPENAI_API_URL"] = "https://env.api.com"
+                        os.environ["LLM_API_KEY"] = "env-key-override"
+                        os.environ["LLM_MODEL"] = "env-model-override"
+                        os.environ["LLM_BASE_URL"] = "https://env.api.com"
 
                         config = load_config()
 
@@ -200,7 +200,7 @@ model = "partial-model"
                         config_path = Path("q4s.toml")
                         config_path.write_text("invalid [[[toml")
 
-                        os.environ["OPENAI_API_KEY"] = "fallback-key"
+                        os.environ["LLM_API_KEY"] = "fallback-key"
 
                         # Should not raise, should fall back to env vars
                         config = load_config()
