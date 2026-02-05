@@ -201,7 +201,7 @@ def create_quarto_project(
         return 1
 
     # Verify all output templates exist
-    template_paths = {}
+    template_paths: dict[str, Path] = {}
     for symlink_name, template_name in templates.items():
         template_path = get_template_path(template_name)
         if not verify_template_exists(template_path, f"Template {template_name}"):
