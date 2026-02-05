@@ -21,6 +21,13 @@ q4s = "quarto4sbp.cli:main"
 [tool.setuptools.packages.find]
 include = ["quarto4sbp*"]
 
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "SIM"]
+
 [tool.pyright]
 pythonVersion = "3.13"
 typeCheckingMode = "strict"
@@ -28,6 +35,11 @@ typeCheckingMode = "strict"
 [dependency-groups]
 dev = [
     "pytest>=8.0.0",
-    "pyright>=1.1.0",
     "pytest-cov>=7.0.0",
+    "ruff>=0.8.0",
+    "pyright>=1.1.390",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --cov=quarto4sbp --cov-report=term-missing --cov-fail-under=80"
