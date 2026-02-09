@@ -106,15 +106,9 @@ class TestRewriteContent(unittest.TestCase):
         """Set up test fixtures."""
         self.mock_client = MockLLMClient()
         self.sections = [
-            QmdSection(
-                content="# Section One\n\nContent 1.\n", start_line=0, end_line=2
-            ),
-            QmdSection(
-                content="# Section Two\n\nContent 2.\n", start_line=3, end_line=5
-            ),
-            QmdSection(
-                content="# Section Three\n\nContent 3.\n", start_line=6, end_line=8
-            ),
+            QmdSection(content="# Section One\n\nContent 1.\n", start_line=0, end_line=2),
+            QmdSection(content="# Section Two\n\nContent 2.\n", start_line=3, end_line=5),
+            QmdSection(content="# Section Three\n\nContent 3.\n", start_line=6, end_line=8),
         ]
 
     def test_rewrite_multiple_sections(self):

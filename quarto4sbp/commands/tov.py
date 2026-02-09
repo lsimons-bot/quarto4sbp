@@ -105,9 +105,7 @@ def process_file(
             return True
 
         # Update file
-        result = update_file(
-            file_path, rewritten_content, create_backup_file=not no_backup
-        )
+        result = update_file(file_path, rewritten_content, create_backup_file=not no_backup)
 
         # Report results
         print("  ✓ File updated successfully")
@@ -145,9 +143,7 @@ def cmd_tov(args: list[str]) -> int:
         print("Rewrite .qmd files to match company tone of voice.", file=sys.stderr)
         print("", file=sys.stderr)
         print("Options:", file=sys.stderr)
-        print(
-            "  --dry-run     Preview changes without modifying files", file=sys.stderr
-        )
+        print("  --dry-run     Preview changes without modifying files", file=sys.stderr)
         print("  --no-backup   Don't create .bak backup files", file=sys.stderr)
         return 1
 

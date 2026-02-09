@@ -117,9 +117,7 @@ More content here.
 
         self.assertEqual(result, 0)
         # Both files should have backups
-        self.assertTrue(
-            (self.test_file.parent / (self.test_file.name + ".bak")).exists()
-        )
+        self.assertTrue((self.test_file.parent / (self.test_file.name + ".bak")).exists())
         self.assertTrue((file2.parent / (file2.name + ".bak")).exists())
 
     def test_directory_with_no_qmd_files(self):

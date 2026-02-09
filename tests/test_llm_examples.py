@@ -60,9 +60,7 @@ class TestBasicLLMUsage:
     def test_regex_pattern_matching(self, mock_llm_empty):
         """Example: Use regex patterns for flexible matching."""
         # Given: Configure with regex pattern
-        mock_llm_empty.add_response(
-            r"(write|create|make).*function", "def example(): pass"
-        )
+        mock_llm_empty.add_response(r"(write|create|make).*function", "def example(): pass")
 
         # When: Different phrasings that match the pattern
         result1 = mock_llm_empty.prompt("write a function to sort")
@@ -88,9 +86,7 @@ class TestToneOfVoiceRewriting:
         casual_text = "Hey, check out this cool feature we built!"
 
         # When: Request formal rewrite
-        result = mock_llm_tov.prompt(
-            f"Rewrite in formal professional tone: {casual_text}"
-        )
+        result = mock_llm_tov.prompt(f"Rewrite in formal professional tone: {casual_text}")
 
         # Then: Should receive formal version from fixture
         assert len(result) > 0
@@ -289,9 +285,7 @@ class TestAdvancedPatterns:
         """Example: Different responses based on prompt content."""
         # Given: Configure responses for different scenarios
         mock_llm_empty.add_response(r"error|bug|issue", "I found the problem!")
-        mock_llm_empty.add_response(
-            r"improve|enhance|optimize", "Here's how to improve it"
-        )
+        mock_llm_empty.add_response(r"improve|enhance|optimize", "Here's how to improve it")
         mock_llm_empty.add_response(r"explain|describe", "Let me explain...")
 
         # When: Ask different types of questions

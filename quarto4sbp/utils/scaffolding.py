@@ -93,9 +93,7 @@ def create_qmd_file(qmd_file: Path, template_qmd: Path, base_name: str) -> bool:
         qmd_content = template_qmd.read_text()
         qmd_content = qmd_content.replace("{{TITLE}}", base_name)
     except OSError as e:
-        print(
-            f"Error: Could not read QMD template '{template_qmd}': {e}", file=sys.stderr
-        )
+        print(f"Error: Could not read QMD template '{template_qmd}': {e}", file=sys.stderr)
         return False
 
     # Write QMD file
@@ -107,9 +105,7 @@ def create_qmd_file(qmd_file: Path, template_qmd: Path, base_name: str) -> bool:
         return False
 
 
-def create_render_script(
-    render_script: Path, template_render: Path, base_name: str
-) -> bool:
+def create_render_script(render_script: Path, template_render: Path, base_name: str) -> bool:
     """Create render.sh script from template.
 
     Args:
@@ -134,9 +130,7 @@ def create_render_script(
         return False
 
 
-def create_template_symlink(
-    symlink_target: Path, template_path: Path, target_dir: Path
-) -> bool:
+def create_template_symlink(symlink_target: Path, template_path: Path, target_dir: Path) -> bool:
     """Create a symlink to a template file.
 
     Args:
@@ -155,9 +149,7 @@ def create_template_symlink(
         # On Windows, symlinks may fail without admin/developer mode
         # Print warning but don't fail the command
         print(f"Warning: Could not create symlink: {e}", file=sys.stderr)
-        print(
-            f"You may need to manually copy or link to {template_path}", file=sys.stderr
-        )
+        print(f"You may need to manually copy or link to {template_path}", file=sys.stderr)
         return False
 
 
@@ -231,4 +223,3 @@ def create_quarto_project(
     print(f"Hint: Run 'cd {target_dir} && ./render.sh' to generate the output")
 
     return 0
-

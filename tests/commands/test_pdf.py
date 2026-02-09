@@ -23,9 +23,7 @@ class TestCmdPdf(unittest.TestCase):
 
     @patch("quarto4sbp.commands.pdf.cmd_pdf_pptx")
     @patch("quarto4sbp.commands.pdf.cmd_pdf_docx")
-    def test_both_commands_succeed(
-        self, mock_pdf_doc: MagicMock, mock_pdf_pptx: MagicMock
-    ) -> None:
+    def test_both_commands_succeed(self, mock_pdf_doc: MagicMock, mock_pdf_pptx: MagicMock) -> None:
         """Test unified command when both format exports succeed."""
         mock_pdf_pptx.return_value = 0
         mock_pdf_doc.return_value = 0
@@ -47,9 +45,7 @@ class TestCmdPdf(unittest.TestCase):
 
     @patch("quarto4sbp.commands.pdf.cmd_pdf_pptx")
     @patch("quarto4sbp.commands.pdf.cmd_pdf_docx")
-    def test_pptx_fails(
-        self, mock_pdf_doc: MagicMock, mock_pdf_pptx: MagicMock
-    ) -> None:
+    def test_pptx_fails(self, mock_pdf_doc: MagicMock, mock_pdf_pptx: MagicMock) -> None:
         """Test unified command when PowerPoint export fails."""
         mock_pdf_pptx.return_value = 1
         mock_pdf_doc.return_value = 0
@@ -129,9 +125,7 @@ class TestCmdPdf(unittest.TestCase):
 
     @patch("quarto4sbp.commands.pdf.cmd_pdf_pptx")
     @patch("quarto4sbp.commands.pdf.cmd_pdf_docx")
-    def test_output_sections(
-        self, mock_pdf_doc: MagicMock, mock_pdf_pptx: MagicMock
-    ) -> None:
+    def test_output_sections(self, mock_pdf_doc: MagicMock, mock_pdf_pptx: MagicMock) -> None:
         """Test that output is clearly sectioned."""
         mock_pdf_pptx.return_value = 0
         mock_pdf_doc.return_value = 0
@@ -144,9 +138,7 @@ class TestCmdPdf(unittest.TestCase):
 
         # Verify clear section headers
         lines = output.split("\n")
-        pptx_section_idx = next(
-            i for i, line in enumerate(lines) if "PowerPoint" in line
-        )
+        pptx_section_idx = next(i for i, line in enumerate(lines) if "PowerPoint" in line)
         doc_section_idx = next(i for i, line in enumerate(lines) if "Word" in line)
 
         # Word section should come after PowerPoint section

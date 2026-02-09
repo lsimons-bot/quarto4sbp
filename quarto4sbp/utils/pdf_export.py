@@ -54,9 +54,7 @@ def find_stale_files(directory: Path, extension: str) -> list[Path]:
     return stale_files
 
 
-def export_to_pdf_via_applescript(
-    source_path: Path, applescript: str, app_name: str
-) -> bool:
+def export_to_pdf_via_applescript(source_path: Path, applescript: str, app_name: str) -> bool:
     """Export a file to PDF using an Office app via AppleScript.
 
     Args:

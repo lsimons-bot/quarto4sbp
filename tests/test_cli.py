@@ -126,9 +126,7 @@ class TestMain(unittest.TestCase):
 
                 self.assertEqual(result, 0)
                 self.assertIn("Created: test-project/test-project.qmd", output)
-                self.assertIn(
-                    "Output: Both PowerPoint (.pptx) and Word (.docx)", output
-                )
+                self.assertIn("Output: Both PowerPoint (.pptx) and Word (.docx)", output)
             finally:
                 os.chdir(old_cwd)
                 sys.stdout = old_stdout
@@ -291,9 +289,7 @@ class TestCLIIntegration(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0)
             self.assertIn("Created: test-project/test-project.qmd", result.stdout)
-            self.assertIn(
-                "Output: Both PowerPoint (.pptx) and Word (.docx)", result.stdout
-            )
+            self.assertIn("Output: Both PowerPoint (.pptx) and Word (.docx)", result.stdout)
 
             # Verify QMD file was created
             qmd_file = Path(temp_dir) / "test-project" / "test-project.qmd"

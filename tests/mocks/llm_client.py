@@ -37,9 +37,7 @@ class MockLLMClient:
             ValueError: If no matching response found and no default set
         """
         # Record the call
-        self.call_history.append(
-            {"prompt": prompt_text, "kwargs": kwargs, "type": "prompt"}
-        )
+        self.call_history.append({"prompt": prompt_text, "kwargs": kwargs, "type": "prompt"})
 
         # Try exact match first
         if prompt_text in self.responses:

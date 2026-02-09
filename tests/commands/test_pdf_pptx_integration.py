@@ -31,9 +31,7 @@ class TestPdfIntegration(unittest.TestCase):
         """Set up test fixtures."""
         # Get path to template PPTX file
         self.project_root = Path(__file__).parent.parent.parent
-        self.template_pptx = (
-            self.project_root / "templates" / "simple-presentation.pptx"
-        )
+        self.template_pptx = self.project_root / "templates" / "simple-presentation.pptx"
 
         # Verify template exists
         if not self.template_pptx.exists():

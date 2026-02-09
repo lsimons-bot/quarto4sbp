@@ -119,9 +119,7 @@ class TestLLMClientPrompt(unittest.TestCase):
         self.assertEqual(call_args[1]["max_tokens"], 500)
 
     @patch("quarto4sbp.llm.client.BaseLLMClient")
-    def test_prompt_failure_raises_value_error(
-        self, mock_base_client_class: MagicMock
-    ) -> None:
+    def test_prompt_failure_raises_value_error(self, mock_base_client_class: MagicMock) -> None:
         """Test that prompt raises ValueError on failure."""
         mock_client = MagicMock()
         mock_client.chat.side_effect = Exception("API error")

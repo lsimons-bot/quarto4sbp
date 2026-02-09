@@ -122,9 +122,7 @@ def load_config() -> LLMConfig:
         temperature=float(config_dict["temperature"])
         if isinstance(config_dict["temperature"], (int, float))
         else 0.7,
-        timeout=int(config_dict["timeout"])
-        if isinstance(config_dict["timeout"], int)
-        else 30,
+        timeout=int(config_dict["timeout"]) if isinstance(config_dict["timeout"], int) else 30,
         max_attempts=int(config_dict["max_attempts"])
         if isinstance(config_dict["max_attempts"], int)
         else 3,

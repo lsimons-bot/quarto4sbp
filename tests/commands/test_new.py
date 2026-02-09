@@ -63,9 +63,7 @@ class TestCmdNew(unittest.TestCase):
 
         self.assertEqual(result, 0)
         self.assertIn("Created: test-project/test-project.qmd", stdout_output)
-        self.assertIn(
-            "Output: Both PowerPoint (.pptx) and Word (.docx)", stdout_output
-        )
+        self.assertIn("Output: Both PowerPoint (.pptx) and Word (.docx)", stdout_output)
         self.assertIn("Hint: Run 'cd test-project && ./render.sh'", stdout_output)
 
         # Verify directory exists

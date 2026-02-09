@@ -323,9 +323,7 @@ only_in_local = "local_only"
                     self.assertEqual(config["section"]["key2"], "user_value2")
                     # Values from both configs present
                     self.assertEqual(config["section"]["only_in_user"], "user_only")
-                    self.assertEqual(
-                        config["section"]["only_in_local"], "local_only"
-                    )
+                    self.assertEqual(config["section"]["only_in_local"], "local_only")
             finally:
                 os.chdir(original_cwd)
 
@@ -372,21 +370,11 @@ max_attempts = 5
                     config = load_config(cache=False)
 
                     # Check that nested merging works correctly
-                    self.assertEqual(
-                        config["llm"]["model"], "local-model"
-                    )  # overridden
-                    self.assertEqual(
-                        config["llm"]["api_key"], "user-key"
-                    )  # preserved
-                    self.assertEqual(
-                        config["llm"]["retry"]["max_attempts"], 5
-                    )  # overridden
-                    self.assertEqual(
-                        config["llm"]["retry"]["backoff_factor"], 2
-                    )  # preserved
-                    self.assertEqual(
-                        config["other_section"]["value"], "user"
-                    )  # preserved
+                    self.assertEqual(config["llm"]["model"], "local-model")  # overridden
+                    self.assertEqual(config["llm"]["api_key"], "user-key")  # preserved
+                    self.assertEqual(config["llm"]["retry"]["max_attempts"], 5)  # overridden
+                    self.assertEqual(config["llm"]["retry"]["backoff_factor"], 2)  # preserved
+                    self.assertEqual(config["other_section"]["value"], "user")  # preserved
             finally:
                 os.chdir(original_cwd)
 
@@ -415,9 +403,7 @@ model = "gpt-4"
 
                         config = load_config(expand_vars=True, cache=False)
 
-                        self.assertEqual(
-                            config["llm"]["api_key"], "expanded-key-123"
-                        )
+                        self.assertEqual(config["llm"]["api_key"], "expanded-key-123")
                         self.assertEqual(config["llm"]["model"], "gpt-4")
                 finally:
                     os.chdir(original_cwd)
@@ -551,9 +537,7 @@ class TestConfigCaching(unittest.TestCase):
 
                     # Second load should return cached value
                     config2 = load_config(cache=True)
-                    self.assertEqual(
-                        config2["section"]["key"], "value1"
-                    )  # Still cached
+                    self.assertEqual(config2["section"]["key"], "value1")  # Still cached
 
                     # Should be same object
                     self.assertIs(config1, config2)
