@@ -4,10 +4,10 @@ Python tool for [Quarto](https://quarto.org/) workflows at Schuberg Philis. Crea
 
 ## Quick Reference
 
-- **Setup**: `uv venv && uv pip install -e . && python install.py`
+- **Setup**: `uv sync --all-groups`
 - **Run**: `q4s help`, `q4s new my-project`, `q4s pdf`
 - **Test**: `uv run pytest -v`
-- **Lint**: `uv run pyright`
+- **Lint**: `uv run ruff check . && uv run basedpyright`
 - **Coverage**: `uv run pytest --cov=quarto4sbp --cov-report=term --cov-fail-under=80`
 
 ## Structure
@@ -21,7 +21,7 @@ See [README.md](README.md) for usage and [DESIGN.md](DESIGN.md) for architecture
 ## Guidelines
 
 **Code quality:**
-- Full type annotations (pyright: 0 errors, 0 warnings)
+- Full type annotations (basedpyright: 0 errors, 0 warnings)
 - Minimum 80% test coverage
 - Tests mirror code structure
 
@@ -45,9 +45,8 @@ Work is NOT complete until `git push` succeeds.
 
 1. **Quality gates** (if code changed):
    ```bash
-   uv run pytest -v
-   uv run pyright
-   uv run pytest --cov=quarto4sbp --cov-report=term --cov-fail-under=80
+   uv run ruff check . && uv run basedpyright
+   uv run pytest
    ```
 
 2. **Push**:

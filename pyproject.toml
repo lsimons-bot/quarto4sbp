@@ -7,7 +7,7 @@ name = "quarto4sbp"
 version = "0.1.0"
 description = "Tool for working with quarto in Schuberg Philis."
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "lsimons-llm @ git+https://github.com/lsimons-bot/lsimons-llm.git",
 ]
@@ -23,13 +23,13 @@ include = ["quarto4sbp*"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py313"
+target-version = "py314"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP", "B", "SIM"]
 
-[tool.pyright]
-pythonVersion = "3.13"
+[tool.basedpyright]
+pythonVersion = "3.14"
 typeCheckingMode = "strict"
 
 [dependency-groups]
@@ -37,7 +37,7 @@ dev = [
     "pytest>=8.0.0",
     "pytest-cov>=7.0.0",
     "ruff>=0.8.0",
-    "pyright>=1.1.390",
+    "basedpyright>=1.22.0",
 ]
 
 [tool.pytest.ini_options]

@@ -195,7 +195,7 @@ def load_config(expand_vars: bool = True, cache: bool = True) -> dict[str, Any]:
         try:
             user_data = load_toml_file(user_config_path)
             merged_config = user_data
-        except (FileNotFoundError, ValueError):
+        except FileNotFoundError, ValueError:
             # User config errors are non-fatal
             pass
 
@@ -204,7 +204,7 @@ def load_config(expand_vars: bool = True, cache: bool = True) -> dict[str, Any]:
         try:
             local_data = load_toml_file(local_config_path)
             merged_config = _merge_dicts(merged_config, local_data)
-        except (FileNotFoundError, ValueError):
+        except FileNotFoundError, ValueError:
             # Local config errors are non-fatal
             pass
 

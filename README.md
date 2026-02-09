@@ -4,7 +4,7 @@ Python tool for working with [quarto](https://quarto.org/) in [Schuberg Philis](
 
 ## Prerequisites
 
-- **Python 3.13+** with `uv` package manager: try `brew install uv` on Mac
+- **Python 3.14+** with `uv` package manager: try `brew install uv` on Mac
 - [quarto](https://quarto.org/) CLI installed: try `brew install quarto` on Mac
 - for PDF export:
   - **Mac OS X**
@@ -325,6 +325,6 @@ RUN_INTEGRATION_TESTS=1 uv run pytest -v
 
 ### Type Checking
 
-This project uses strict type checking with pyright. Run type checks using: `uv run pyright`.
+This project uses strict type checking with basedpyright. Run type checks using: `uv run basedpyright`.
 
-All code must pass pyright checks with no errors or warnings before merging.
+All code must pass basedpyright checks with no errors or warnings before merging.
