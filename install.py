@@ -18,14 +18,12 @@ def main() -> int:
     pyproject_path = project_dir / "pyproject.toml"
     if not pyproject_path.exists():
         print("Error: pyproject.toml not found.", file=sys.stderr)
-        print(
-            "Please run this script from the quarto4sbp project root.", file=sys.stderr
-        )
+        print("Please run this script from the quarto4sbp project root.", file=sys.stderr)
         return 1
 
     # Verify it's the right project
     try:
-        with open(pyproject_path, "r") as f:
+        with open(pyproject_path) as f:
             content = f.read()
             if 'name = "quarto4sbp"' not in content:
                 print(

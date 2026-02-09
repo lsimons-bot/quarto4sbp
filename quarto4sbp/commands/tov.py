@@ -6,7 +6,6 @@ guidelines using LLM, while preserving structure, YAML frontmatter, and code blo
 
 import sys
 from pathlib import Path
-from typing import Optional
 
 from quarto4sbp.llm.client import LLMClient
 from quarto4sbp.tov.parser import parse_qmd, reconstruct_qmd
@@ -39,7 +38,7 @@ def show_diff(original: str, rewritten: str, file_path: Path) -> None:
     print("Preview of changes:")
     print("-" * 60)
     changes_shown = 0
-    for i, (old, new) in enumerate(zip(orig_lines, new_lines)):
+    for i, (old, new) in enumerate(zip(orig_lines, new_lines, strict=False)):
         if old != new and changes_shown < 10:
             print(f"Line {i + 1}:")
             print(f"  - {old[:70]}")
@@ -106,12 +105,10 @@ def process_file(
             return True
 
         # Update file
-        result = update_file(
-            file_path, rewritten_content, create_backup_file=not no_backup
-        )
+        result = update_file(file_path, rewritten_content, create_backup_file=not no_backup)
 
         # Report results
-        print(f"  ✓ File updated successfully")
+        print("  ✓ File updated successfully")
         if result["backup_path"]:
             print(f"  Backup created: {result['backup_path']}")
         print(f"  Lines changed: {result['lines_changed']}")
@@ -146,14 +143,12 @@ def cmd_tov(args: list[str]) -> int:
         print("Rewrite .qmd files to match company tone of voice.", file=sys.stderr)
         print("", file=sys.stderr)
         print("Options:", file=sys.stderr)
-        print(
-            "  --dry-run     Preview changes without modifying files", file=sys.stderr
-        )
+        print("  --dry-run     Preview changes without modifying files", file=sys.stderr)
         print("  --no-backup   Don't create .bak backup files", file=sys.stderr)
         return 1
 
     # Extract path and flags
-    path_arg: Optional[str] = None
+    path_arg: str | None = None
     dry_run = False
     no_backup = False
 

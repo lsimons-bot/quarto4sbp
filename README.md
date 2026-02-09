@@ -99,6 +99,8 @@ Step-by-step instructions:
 
 The `q4s` CLI includes AI-powered features that use Large Language Models (LLMs) for tasks like tone-of-voice rewriting and image generation. These features require LLM API access.
 
+This project uses [lsimons-llm](https://github.com/lsimons-bot/lsimons-llm) for LLM client functionality.
+
 ### Prerequisites
 
 You'll need:
@@ -111,7 +113,7 @@ The simplest way to get started is with an environment variable:
 
 ```bash
 # Set your API key
-export OPENAI_API_KEY="sk-..."
+export LLM_API_KEY="sk-..."
 
 # Test the connection
 q4s llm test
@@ -121,17 +123,17 @@ q4s llm test
 
 #### Environment Variables
 
-The following environment variables are supported:
+See the [lsimons-llm README](https://github.com/lsimons-bot/lsimons-llm#configuration) for full environment variable documentation. Key variables:
 
-- **`OPENAI_API_KEY`** (required): Your API key for authentication
-- **`OPENAI_API_MODEL`** (optional): Override the default model
-- **`OPENAI_API_URL`** (optional): Custom API endpoint URL
+- **`LLM_API_KEY`** (required): Your API key for authentication
+- **`LLM_MODEL`** (optional): Override the default model
+- **`LLM_BASE_URL`** (optional): Custom API endpoint URL
 
 Example:
 ```bash
-export OPENAI_API_KEY="sk-..."
-export OPENAI_API_MODEL="azure/gpt-5-mini"
-export OPENAI_API_URL="https://litellm.sbp.ai/v1"
+export LLM_API_KEY="sk-..."
+export LLM_MODEL="azure/gpt-5-mini"
+export LLM_BASE_URL="https://litellm.sbp.ai/v1"
 ```
 
 #### Configuration Files
@@ -145,7 +147,7 @@ For more advanced configuration, you can use TOML files. q4s supports two config
 ```toml
 [llm]
 model = "azure/gpt-5-mini"           # Default model
-api_key = "${OPENAI_API_KEY}"        # Environment variable expansion
+api_key = "${LLM_API_KEY}"        # Environment variable expansion
 max_tokens = 10000                   # Maximum tokens per request
 temperature = 0.7                    # Sampling temperature (0.0-1.0)
 timeout = 30                         # Request timeout in seconds
@@ -180,7 +182,7 @@ Configuration files support `${VAR_NAME}` syntax for environment variables:
 
 ```toml
 [llm]
-api_key = "${OPENAI_API_KEY}"        # Expands to env var value
+api_key = "${LLM_API_KEY}"        # Expands to env var value
 base_url = "${CUSTOM_API_URL}"       # Works for any setting
 ```
 
@@ -221,7 +223,7 @@ LLM integration is working correctly!
 ### Troubleshooting
 
 **Error: "API key not configured"**
-- Set `OPENAI_API_KEY` environment variable, or
+- Set `LLM_API_KEY` environment variable, or
 - Add `api_key` to your `q4s.toml` file
 
 **Error: "API call failed"**
@@ -246,7 +248,7 @@ The default model is `azure/gpt-5-mini`, but you can use any model supported by 
 ### Security Best Practices
 
 - **Never commit API keys to version control**
-- Use environment variables or expand them in config files: `api_key = "${OPENAI_API_KEY}"`
+- Use environment variables or expand them in config files: `api_key = "${LLM_API_KEY}"`
 - Set appropriate file permissions on config files: `chmod 600 ~/.config/q4s.toml`
 - Use project-specific API keys when possible
 - Rotate keys regularly

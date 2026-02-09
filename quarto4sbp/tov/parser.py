@@ -7,7 +7,6 @@ rewriting while preserving the original structure.
 
 import re
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -24,7 +23,7 @@ class QmdSection:
     content: str
     start_line: int
     end_line: int
-    level: Optional[int] = None
+    level: int | None = None
 
 
 @dataclass
@@ -188,9 +187,7 @@ def reconstruct_qmd(doc: QmdDocument, rewritten_sections: list[str]) -> str:
     result = "".join(parts)
 
     # Ensure file ends with newline if original did
-    if doc.full_content.endswith(("\n", "\r\n")) and not result.endswith(
-        ("\n", "\r\n")
-    ):
+    if doc.full_content.endswith(("\n", "\r\n")) and not result.endswith(("\n", "\r\n")):
         result += doc.line_endings
 
     return result

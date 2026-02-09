@@ -37,9 +37,7 @@ class MockLLMClient:
             ValueError: If no matching response found and no default set
         """
         # Record the call
-        self.call_history.append(
-            {"prompt": prompt_text, "kwargs": kwargs, "type": "prompt"}
-        )
+        self.call_history.append({"prompt": prompt_text, "kwargs": kwargs, "type": "prompt"})
 
         # Try exact match first
         if prompt_text in self.responses:
@@ -106,10 +104,7 @@ class MockLLMClient:
         Returns:
             True if any call matches pattern
         """
-        for call in self.call_history:
-            if re.search(pattern, call["prompt"], re.IGNORECASE):
-                return True
-        return False
+        return any(re.search(pattern, call["prompt"], re.IGNORECASE) for call in self.call_history)
 
     def get_calls_matching(self, pattern: str) -> list[dict[str, Any]]:
         """Get all calls matching a pattern.

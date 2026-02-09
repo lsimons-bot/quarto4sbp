@@ -160,9 +160,7 @@ class TestCmdNewPptx(unittest.TestCase):
         stdout_output = sys.stdout.getvalue()
 
         self.assertEqual(result, 0)
-        self.assertIn(
-            "Created: subdir/my-presentation/my-presentation.qmd", stdout_output
-        )
+        self.assertIn("Created: subdir/my-presentation/my-presentation.qmd", stdout_output)
 
         # Verify nested directory structure
         target_dir = Path("subdir/my-presentation")

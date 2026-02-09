@@ -1,13 +1,13 @@
 """Tests for tov command."""
 
+import shutil
+import tempfile
 import unittest
 from pathlib import Path
-import tempfile
-import shutil
+from unittest.mock import MagicMock, patch
 
 from quarto4sbp.commands.tov import cmd_tov
 from tests.mocks.llm_client import MockLLMClient
-from unittest.mock import patch, MagicMock
 
 
 class TestCmdTov(unittest.TestCase):
@@ -117,9 +117,7 @@ More content here.
 
         self.assertEqual(result, 0)
         # Both files should have backups
-        self.assertTrue(
-            (self.test_file.parent / (self.test_file.name + ".bak")).exists()
-        )
+        self.assertTrue((self.test_file.parent / (self.test_file.name + ".bak")).exists())
         self.assertTrue((file2.parent / (file2.name + ".bak")).exists())
 
     def test_directory_with_no_qmd_files(self):

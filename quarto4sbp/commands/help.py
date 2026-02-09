@@ -46,9 +46,7 @@ def cmd_help() -> int:
     print("  q4s new-docx my-document")
     print()
     print("  # Export to PDF:")
-    print(
-        "  q4s pdf                    # Export all Office documents in current directory"
-    )
+    print("  q4s pdf                    # Export all Office documents in current directory")
     print("  q4s pdf-pptx               # Export only PowerPoint files")
     print("  q4s pdf-docx               # Export only Word documents")
     return 0

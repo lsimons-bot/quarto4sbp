@@ -29,26 +29,18 @@ class TestPromptLoader(unittest.TestCase):
 
         # Create test prompts
         (self.prompts_dir / "simple.txt").write_text("Simple prompt text")
-        (self.prompts_dir / "test_category" / "prompt1.txt").write_text(
-            "Category prompt 1"
-        )
+        (self.prompts_dir / "test_category" / "prompt1.txt").write_text("Category prompt 1")
         (self.prompts_dir / "test_category" / "prompt2.md").write_text(
             "Category prompt 2 in markdown"
         )
-        (self.prompts_dir / "other_category" / "prompt3.txt").write_text(
-            "Other category prompt"
-        )
+        (self.prompts_dir / "other_category" / "prompt3.txt").write_text("Other category prompt")
 
         # Create a template prompt with variables
-        (self.prompts_dir / "template.txt").write_text(
-            "Hello {name}, your value is {value}."
-        )
+        (self.prompts_dir / "template.txt").write_text("Hello {name}, your value is {value}.")
 
         # Create nested directory structure
         (self.prompts_dir / "nested" / "deep").mkdir(parents=True)
-        (self.prompts_dir / "nested" / "deep" / "prompt.txt").write_text(
-            "Deeply nested prompt"
-        )
+        (self.prompts_dir / "nested" / "deep" / "prompt.txt").write_text("Deeply nested prompt")
 
         self.loader = PromptLoader(self.prompts_dir)
 
